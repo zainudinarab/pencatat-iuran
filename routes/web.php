@@ -32,4 +32,5 @@ Route::middleware('auth')->group(function () {
     Route::resource('residents', ResidentController::class);
     Route::resource('penarikan', PenarikanController::class);
     Route::resource('setoran', SetoranController::class);
+    Route::get('/penarikan-by-residents', [PenarikanController::class, 'getresidents'])->name('penarikan.getresidents');
 });

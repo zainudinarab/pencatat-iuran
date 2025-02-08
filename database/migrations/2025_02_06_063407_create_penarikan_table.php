@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('resident_id')->constrained('residents')->onDelete('cascade');
             $table->decimal('amount', 10, 2);
             $table->date('tanggal_penarikan');
-            $table->foreignId('setoran_id')->nullable()->constrained('setoran')->onDelete('cascade');
+            $table->foreignId('setoran_id')->nullable()->constrained('setorans')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('penarikan');
+        Schema::dropIfExists('penarikans');
     }
 };
