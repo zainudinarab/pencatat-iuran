@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('petugas_id')->constrained('users')->onDelete('cascade');
             $table->decimal('total_amount', 10, 2);
             $table->date('tanggal_setoran');
-            $table->enum('status', ['pending', 'confirmed'])->default('pending');
+            $table->enum('status', ['pending', 'confirmed','ditolak'])->default('pending');
             $table->timestamps();
         });
     }

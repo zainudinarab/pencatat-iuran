@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('konfirmasi_setoran', function (Blueprint $table) {
+        Schema::create('konfirmasi_setorans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('setoran_id')->constrained()->onDelete('cascade');
             $table->foreignId('bendahara_id')->constrained('users')->onDelete('cascade');
-            $table->enum('status', ['pending', 'diterima', 'ditolak'])->default('pending');
+            $table->enum('status', ['pending', 'confirmed', 'ditolak'])->default('pending');
             $table->text('catatan')->nullable();
             $table->timestamps();
         });
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('konfirmasi_setoran');
+        Schema::dropIfExists('konfirmasi_setorans');
     }
 };

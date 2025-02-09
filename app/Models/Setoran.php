@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Setoran extends Model
 {
-    protected $fillable = ['bendahara_id', 'total_amount', 'tanggal_setoran', 'status'];
+    protected $fillable = ['petugas_id','bendahara_id', 'total_amount', 'tanggal_setoran', 'status'];
 
     public function bendahara()
     {
@@ -16,5 +16,9 @@ class Setoran extends Model
     public function penarikan()
     {
         return $this->hasMany(Penarikan::class);
+    }
+    public function petugas()
+    {
+        return $this->belongsTo(User::class, 'petugas_id');
     }
 }

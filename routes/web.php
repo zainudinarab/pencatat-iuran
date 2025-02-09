@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PenarikanController;
 use App\Http\Controllers\SetoranController;
 use App\Http\Controllers\ResidentController;
+use App\Http\Controllers\KonfirmasiSetoranController;
 
 
 
@@ -33,5 +34,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('penarikan', PenarikanController::class);
     Route::resource('setoran', SetoranController::class);
     Route::get('/penarikan-by-residents', [PenarikanController::class, 'getresidents'])->name('penarikan.getresidents');
-    Route::post('/setoran/{id}/confirm', [SetoranController::class, 'confirmSetoran'])->name('setoran.confirm');
+    // Route::put('/setoran/{id}/confirm', [SetoranController::class, 'handleConfirmation'])->name('setoran.confirm');
+    Route::get('confirm-setoran', [KonfirmasiSetoranController::class, 'confirmSetoran'])->name('confirm.setoran');
+    
+    // Confirm setoran
+    // Route::put('setoran/{id}/confirm', [KonfirmasiSetoranController::class, 'handleConfirmation'])->name('confirm.setoran.action');
+    Route::put('/setoran/{setoran}/konfirmasi', [KonfirmasiSetoranController::class, 'konfirmasi'])->name('setoran.konfirmasi');
+    // Route for handling the confirmation action (from modal)
+// Route::put('setoran/{id}/confirm', [BendaharaController::class, 'handleConfirmation'])->name('confirm.setoran.action');
+
 });

@@ -13,9 +13,9 @@ class SetoranController extends Controller
     {
         $user = auth()->user();
         if ($user->role === 'bendahara') {
-            $setorans = Setoran::with('bendahara')->get();
+            $setorans = Setoran::with('petugas')->get();
         } else {
-            $setorans = Setoran::with('bendahara')->where('bendahara_id', $user->id)->get();
+            $setorans = Setoran::with('petugas')->where('petugas_id', $user->id)->get();
         }
         // $setorans = Setoran::with('bendahara')->get();
         return view('setoran.index', compact('setorans'));
@@ -48,12 +48,12 @@ class SetoranController extends Controller
 
         // Create a new setoran record
         $setoran = Setoran::create([
-            'bendahara_id' => $request->petugas_id,
+            'petugas_id' => $request->petugas_id,
             'total_amount' => $request->total_amount,
             'tanggal_setoran' => $request->tanggal_setoran,
             'status' => 'pending',  // You can modify this as needed
         ]);
-
+// dd($setoran);
         // Update the related penarikans to associate them with the new setoran_id
         Penarikan::whereIn('id', $request->penarikan_ids)
             ->update(['setoran_id' => $setoran->id]);
@@ -119,4 +119,21 @@ class SetoranController extends Controller
 
         return redirect()->route('setoran.index')->with('success', 'Setoran berhasil dikonfirmasi.');
     }
+    public function handleConfirmation(Request $request)
+{
+    $setoran = Setoran::findOrFail($request->setoran_id);
+
+    // Create a confirmation record
+    KonfirmasiSetoran::create([
+        'setoran_id' => $setoran->id,
+        'bendahara_id' => auth()->id(),
+        'status' => $request->status, // 'diterima' or 'ditolak'
+        'catatan' => $request->catatan,
+    ]);
+
+    // Update the setoran status based on confirmation
+    $setoran->update(['status' => $request->status == 'diterima' ? 'confirmed' : 'pending']);
+
+    return redirect()->route('confirm.setoran')->with($request->status == 'diterima' ? 'success' : 'error', 'Setoran telah ' . ($request->status == 'diterima' ? 'dikukuhkan' : 'ditolak'));
+}
 }

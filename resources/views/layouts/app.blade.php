@@ -43,7 +43,7 @@
                                 <a class="nav-link" href="/setoran">setoran</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="">Settings</a>
+                                <a class="nav-link" href="/confirm-setoran">confirm setoran</a>
                             </li>
                         @endauth
                     </ul>

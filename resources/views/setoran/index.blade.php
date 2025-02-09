@@ -22,7 +22,7 @@
             <tbody>
                 @foreach ($setorans as $setoran)
                     <tr>
-                        <td>{{ $setoran->bendahara->name }}</td>
+                        <td>{{ $setoran->petugas->name }}</td>
                         <td>Rp{{ number_format($setoran->total_amount, 2, ',', '.') }}</td>
                         <td>{{ $setoran->tanggal_setoran }}</td>
                         <td>
