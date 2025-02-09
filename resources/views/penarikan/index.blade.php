@@ -16,7 +16,7 @@
                     <th>Resident</th>
                     <th>Jumlah</th>
                     <th>Tanggal Penarikan</th>
-                    <th>Setoran</th>
+                    <th>Tanggal Setoran</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -25,18 +25,28 @@
                     <tr>
                         <td>{{ $penarikan->petugas->name }}</td>
                         <td>{{ $penarikan->resident->name }}</td>
-                        <td>Rp{{ number_format($penarikan->amount, 2, ',', '.') }}</td>
+                        {{-- rata kananan --}}
+                        <td>Rp {{ number_format($penarikan->amount, 0, ',', '.') }}</td>
                         <td>{{ $penarikan->tanggal_penarikan }}</td>
-                        <td>{{ $penarikan->setoran ? $penarikan->setoran->id : '-' }}</td>
                         <td>
-                            <a href="{{ route('penarikan.edit', $penarikan->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                            <form action="{{ route('penarikan.destroy', $penarikan->id) }}" method="POST"
-                                style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm"
-                                    onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
-                            </form>
+                            {{ $penarikan->setoran ? \Carbon\Carbon::parse($penarikan->setoran->tanggal_setoran)->format('d M Y') : '-' }}
+                        </td>
+
+
+                        <td>
+                            {{-- jika $penarikan->setoran masih kosong maka dapat di edit atau di delete --}}
+                            @if (!$penarikan->setoran)
+                                <a href="{{ route('penarikan.edit', $penarikan->id) }}"
+                                    class="btn btn-warning btn-sm">Edit</a>
+                                <form action="{{ route('penarikan.destroy', $penarikan->id) }}" method="POST"
+                                    style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                                </form>
+                            @endif
+
                         </td>
                     </tr>
                 @endforeach

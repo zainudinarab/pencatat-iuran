@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('setorans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('bendahara_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('bendahara_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('petugas_id')->constrained('users')->onDelete('cascade');
             $table->decimal('total_amount', 10, 2);
             $table->date('tanggal_setoran');
             $table->enum('status', ['pending', 'confirmed'])->default('pending');

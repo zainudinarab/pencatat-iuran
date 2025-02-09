@@ -48,23 +48,22 @@
                     autocomplete="off">
                 <div id="suggestions" class="suggestions mt-2" style="display: none;"></div>
             </div>
-{{-- <input type="text" name="user_id" value="{{ Auth::user()->id }}"> --}}
-<input type="text" name="petugas_id" value="{{ $petugas->id }}">
+            {{-- <input type="text" name="user_id" value="{{ Auth::user()->id }}"> --}}
+            <input type="text" name="petugas_id" value="{{ $petugas->id }}" hidden>
             <!-- Form Grup: Anggota Terpilih -->
             <div class="mb-3">
                 <label for="selected-member" class="form-label">Anggota Terpilih</label>
                 <input type="text" id="selected-member" class="form-control" readonly
                     placeholder="Anggota belum dipilih">
-                <input type="text" name="resident_id" id="resident_id" class="form-control">
+                <input type="text" name="resident_id" id="resident_id" class="form-control" hidden>
             </div>
 
             <!-- Form Grup: Jumlah Pembayaran -->
             <div class="mb-3">
                 <label for="amount" class="form-label">Jumlah Pembayaran (Rp)</label>
-                <input type="text"  id="amount" class="form-control"
-                    placeholder="Masukkan Jumlah Pembayaran" required>
+                <input type="text" id="amount" class="form-control" placeholder="Masukkan Jumlah Pembayaran" required>
             </div>
-            <input type="text" name="amount" id="amount_numeric">
+            <input type="text" name="amount" id="amount_numeric" class="form-control" hidden>
 
             <!-- Form Grup: Tanggal Penarikan -->
             <div class="mb-3">
@@ -78,19 +77,7 @@
 
         <!-- Tabel Daftar Pembayaran -->
         <h3 class="mt-4">Daftar Pembayaran</h3>
-        {{-- <table id="payment-table" class="table table-striped">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>ID Anggota</th>
-                    <th>Nama Anggota</th>
-                    <th>Jumlah Pembayaran (Rp)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Data akan ditampilkan di sini -->
-            </tbody>
-        </table> --}}
+
         <table id="penarikans-table" class="table">
             <thead>
                 <tr>
@@ -106,7 +93,7 @@
                 <!-- Data akan diisi oleh JavaScript -->
             </tbody>
         </table>
-        
+
     </div>
 @endsection
 
@@ -137,7 +124,7 @@
         ];
 
         // Variabel untuk menyimpan data pembayaran
-        
+
 
         const searchInput = document.getElementById("member-search");
         const suggestionsBox = document.getElementById("suggestions");
@@ -293,46 +280,46 @@
 
     <script>
         window.onload = function() {
-        // Fokuskan input dengan ID 'amount' begitu halaman dimuat
-        document.getElementById('member-search').focus();
-    };
+            // Fokuskan input dengan ID 'amount' begitu halaman dimuat
+            document.getElementById('member-search').focus();
+        };
 
-    const amountInput = document.getElementById('amount');
-    const amountNumericInput = document.getElementById('amount_numeric');
+        const amountInput = document.getElementById('amount');
+        const amountNumericInput = document.getElementById('amount_numeric');
 
-    // Fungsi untuk memformat input menjadi format Rupiah
-    function formatRupiah(value) {
-        // Menghapus karakter non-angka sebelum memformat
-        value = value.replace(/[^\d]/g, '');
-        
-        // Menambahkan titik sebagai pemisah ribuan
-        value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-        
-        // Menambahkan "Rp" di depan
-        return 'Rp ' + value;
-    }
+        // Fungsi untuk memformat input menjadi format Rupiah
+        function formatRupiah(value) {
+            // Menghapus karakter non-angka sebelum memformat
+            value = value.replace(/[^\d]/g, '');
 
-    // Event listener untuk memformat inputan setiap kali pengguna mengetik
-    amountInput.addEventListener('input', function() {
-        let inputValue = amountInput.value;
-        inputValue = formatRupiah(inputValue);
-        amountInput.value = inputValue;
+            // Menambahkan titik sebagai pemisah ribuan
+            value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
-        // Set nilai numerik di input hidden
-        amountNumericInput.value = getNumericValue();
-    });
-
-    // Fungsi untuk menghapus simbol Rupiah dan mengambil nilai numeriknya
-    function getNumericValue() {
-        let numericValue = amountInput.value.replace(/[^\d]/g, ''); // Hapus simbol Rupiah
-        return parseInt(numericValue, 10); // Mengonversi menjadi angka
-    }
-    document.getElementById('payment-form').addEventListener('submit', function(event) {
-        // Set nilai numerik di input hidden jika belum ada
-        if (!amountNumericInput.value) {
-            amountNumericInput.value = getNumericValue(amountInput.value);
+            // Menambahkan "Rp" di depan
+            return 'Rp ' + value;
         }
-    });
+
+        // Event listener untuk memformat inputan setiap kali pengguna mengetik
+        amountInput.addEventListener('input', function() {
+            let inputValue = amountInput.value;
+            inputValue = formatRupiah(inputValue);
+            amountInput.value = inputValue;
+
+            // Set nilai numerik di input hidden
+            amountNumericInput.value = getNumericValue();
+        });
+
+        // Fungsi untuk menghapus simbol Rupiah dan mengambil nilai numeriknya
+        function getNumericValue() {
+            let numericValue = amountInput.value.replace(/[^\d]/g, ''); // Hapus simbol Rupiah
+            return parseInt(numericValue, 10); // Mengonversi menjadi angka
+        }
+        document.getElementById('payment-form').addEventListener('submit', function(event) {
+            // Set nilai numerik di input hidden jika belum ada
+            if (!amountNumericInput.value) {
+                amountNumericInput.value = getNumericValue(amountInput.value);
+            }
+        });
         // Menggunakan data `residents` yang sudah dikirim dari controller
         let payments = [{
                 memberId: "1",
@@ -411,7 +398,7 @@
                         setCurrentDate(); // Menampilkan tanggal saat ini
                         // Menampilkan data pembayaran anggota terpilih
                         renderFilteredPaymentTable(resident.id);
-                        
+
                     });
                     suggestionsBox.appendChild(suggestionItem);
                 });
@@ -479,49 +466,52 @@
         // }
 
         function renderFilteredPaymentTable(resident_id) {
-    // Pastikan resident_id ada, lalu panggil API dengan parameter resident_id
-    if (resident_id) {
-        fetch(`/penarikan-by-residents?resident_id=${resident_id}`)
-            .then(response => response.json())  // Mengubah respons menjadi JSON
-            .then(data => {
-                let tableBody = document.getElementById('penarikans-body');
-                tableBody.innerHTML = '';  // Kosongkan tabel sebelum diisi ulang
+            // Pastikan resident_id ada, lalu panggil API dengan parameter resident_id
+            if (resident_id) {
+                fetch(`/penarikan-by-residents?resident_id=${resident_id}`)
+                    .then(response => response.json()) // Mengubah respons menjadi JSON
+                    .then(data => {
+                        let tableBody = document.getElementById('penarikans-body');
+                        tableBody.innerHTML = ''; // Kosongkan tabel sebelum diisi ulang
 
-                data.forEach(penarikan => {
-                    let row = document.createElement('tr');
+                        data.forEach(penarikan => {
+                            let row = document.createElement('tr');
 
-                    // Buat kolom untuk data penarikan
-                    let idCell = document.createElement('td');
-                    idCell.textContent = penarikan.id;
-                    row.appendChild(idCell);
+                            // Buat kolom untuk data penarikan
+                            let idCell = document.createElement('td');
+                            idCell.textContent = penarikan.id;
+                            row.appendChild(idCell);
 
-                    let petugasCell = document.createElement('td');
-                    petugasCell.textContent = penarikan.petugas.name;  // Asumsi 'petugas' adalah relasi dengan model User
-                    row.appendChild(petugasCell);
+                            let petugasCell = document.createElement('td');
+                            petugasCell.textContent = penarikan.petugas
+                                .name; // Asumsi 'petugas' adalah relasi dengan model User
+                            row.appendChild(petugasCell);
 
-                    let residentCell = document.createElement('td');
-                    residentCell.textContent = penarikan.resident.name;  // Asumsi 'resident' adalah relasi dengan model Resident
-                    row.appendChild(residentCell);
+                            let residentCell = document.createElement('td');
+                            residentCell.textContent = penarikan.resident
+                                .name; // Asumsi 'resident' adalah relasi dengan model Resident
+                            row.appendChild(residentCell);
 
-                    let amountCell = document.createElement('td');
-                    amountCell.textContent = 'Rp ' + penarikan.amount.toLocaleString();  // Format angka dengan Rupiah
-                    row.appendChild(amountCell);
+                            let amountCell = document.createElement('td');
+                            amountCell.textContent = 'Rp ' + penarikan.amount
+                                .toLocaleString(); // Format angka dengan Rupiah
+                            row.appendChild(amountCell);
 
-                    let tanggalCell = document.createElement('td');
-                    tanggalCell.textContent = penarikan.tanggal_penarikan;
-                    row.appendChild(tanggalCell);
+                            let tanggalCell = document.createElement('td');
+                            tanggalCell.textContent = penarikan.tanggal_penarikan;
+                            row.appendChild(tanggalCell);
 
-                    let setoranCell = document.createElement('td');
-                    setoranCell.textContent = penarikan.setoran ? penarikan.setoran.id : '-';  // Menampilkan ID Setoran jika ada
-                    row.appendChild(setoranCell);
+                            let setoranCell = document.createElement('td');
+                            setoranCell.textContent = penarikan.setoran ? penarikan.setoran.id :
+                                '-'; // Menampilkan ID Setoran jika ada
+                            row.appendChild(setoranCell);
 
-                    // Tambahkan baris ke tabel
-                    tableBody.appendChild(row);
-                });
-            })
-            .catch(error => console.error('Error fetching data:', error));
-    }
-}
-
+                            // Tambahkan baris ke tabel
+                            tableBody.appendChild(row);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            }
+        }
     </script>
 @endpush

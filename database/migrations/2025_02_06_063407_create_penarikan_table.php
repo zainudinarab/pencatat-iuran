@@ -17,7 +17,8 @@ return new class extends Migration
             $table->foreignId('resident_id')->constrained('residents')->onDelete('cascade');
             $table->decimal('amount', 10, 2);
             $table->date('tanggal_penarikan');
-            $table->foreignId('setoran_id')->nullable()->constrained('setorans')->onDelete('cascade');
+            $table->foreignId('setoran_id')->nullable()->constrained('setorans')->onDelete('set null'); // Menggunakan set null
+            $table->timestamps();
             $table->timestamps();
         });
     }

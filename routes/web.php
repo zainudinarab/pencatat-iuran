@@ -33,4 +33,5 @@ Route::middleware('auth')->group(function () {
     Route::resource('penarikan', PenarikanController::class);
     Route::resource('setoran', SetoranController::class);
     Route::get('/penarikan-by-residents', [PenarikanController::class, 'getresidents'])->name('penarikan.getresidents');
+    Route::post('/setoran/{id}/confirm', [SetoranController::class, 'confirmSetoran'])->name('setoran.confirm');
 });

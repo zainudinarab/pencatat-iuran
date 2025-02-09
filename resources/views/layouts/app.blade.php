@@ -37,10 +37,10 @@
                     <ul class="navbar-nav me-auto">
                         @auth
                             <li class="nav-item">
-                                <a class="nav-link" href="">Dashboard</a>
+                                <a class="nav-link" href="/penarikan">penarikan</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="">Profile</a>
+                                <a class="nav-link" href="/setoran">setoran</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="">Settings</a>

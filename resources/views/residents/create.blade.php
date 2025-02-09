@@ -1,9 +1,11 @@
 @extends('layouts.app')
 
+@push('css')
+@endpush
 @section('content')
     <div class="container">
         <h2>Tambah Resident</h2>
-        <form action="{{ route('residents.store') }}" method="POST">
+        {{-- <form action="{{ route('residents.store') }}" method="POST">
             @csrf
             <div class="mb-3">
                 <label for="name" class="form-label">Nama</label>
@@ -23,6 +25,6 @@
             </div>
             <button type="submit" class="btn btn-success">Simpan</button>
             <a href="{{ route('residents.index') }}" class="btn btn-secondary">Batal</a>
-        </form>
+        </form> --}}
     </div>
 @endsection
