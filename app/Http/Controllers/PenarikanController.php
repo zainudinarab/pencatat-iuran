@@ -14,6 +14,7 @@ class PenarikanController extends Controller
     public function index()
     {
         $user = auth()->user();
+       
         if ($user->role === 'bendahara') {
             $penarikans = Penarikan::with('petugas', 'resident', 'setoran')->get();
             $totals = Penarikan::selectRaw('
@@ -39,7 +40,8 @@ class PenarikanController extends Controller
     public function create()
     {
         $residents = Resident::all();
-        $petugas = User::where('role', 'petugas')->where('id', auth()->id())->first();
+        $petugas = User::where('id', auth()->id())->first();
+
         // dd($petugas);
         return view('penarikan.create', compact('residents', 'petugas'));
     }

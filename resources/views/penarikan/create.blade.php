@@ -379,7 +379,7 @@
 
             // Pastikan 'resident.id' diubah ke string sebelum menggunakan 'toLowerCase'
             const filteredResidents = residents.filter(resident =>
-                String(resident.id).toLowerCase().includes(query) ||
+                String(resident.slug).toLowerCase().includes(query) ||
                 resident.name.toLowerCase().includes(query)
             );
 
