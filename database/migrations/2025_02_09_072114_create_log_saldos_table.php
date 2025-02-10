@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // User yang membuat transaksi
             $table->enum('jenis_transaksi', ['setoran', 'pengeluaran']); // Jenis transaksi
+
             $table->decimal('jumlah', 15, 2); // Jumlah yang ditransaksikan
             $table->decimal('saldo_terakhir', 15, 2); // Saldo setelah transaksi
             $table->timestamps();

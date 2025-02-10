@@ -16,11 +16,24 @@ class PenarikanController extends Controller
         $user = auth()->user();
         if ($user->role === 'bendahara') {
             $penarikans = Penarikan::with('petugas', 'resident', 'setoran')->get();
+            $totals = Penarikan::selectRaw('
+                        SUM(penarikans.amount) as total_amount,
+                        SUM(CASE WHEN penarikans.setoran_id IS NOT NULL THEN penarikans.amount ELSE 0 END) as total_setor,
+                        SUM(CASE WHEN penarikans.setoran_id IS NULL THEN penarikans.amount ELSE 0 END) as total_belum_setor
+                        ')
+                ->first(); // Mengambil satu hasil yang sudah dijumlahkan
         } else {
             $penarikans = Penarikan::with('petugas', 'resident', 'setoran')->where('petugas_id', $user->id)->get();
+            $totals = Penarikan::selectRaw('
+                        SUM(penarikans.amount) as total_amount,
+                        SUM(CASE WHEN penarikans.setoran_id IS NOT NULL THEN penarikans.amount ELSE 0 END) as total_setor,
+                        SUM(CASE WHEN penarikans.setoran_id IS NULL THEN penarikans.amount ELSE 0 END) as total_belum_setor
+                        ')
+                ->where('penarikans.petugas_id', $user->id) // Filter berdasarkan petugas_id
+                ->first(); // Mengambil satu hasil yang sudah dijumlahkan
         }
         // $penarikans = Penarikan::with('petugas', 'resident', 'setoran')->get();
-        return view('penarikan.index', compact('penarikans'));
+        return view('penarikan.index', compact('penarikans', 'totals'));
     }
 
     public function create()

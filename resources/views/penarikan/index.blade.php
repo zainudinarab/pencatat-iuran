@@ -3,12 +3,47 @@
 @section('content')
     <div class="container">
         <h2>Daftar Penarikan</h2>
+
         <a href="{{ route('penarikan.create') }}" class="btn btn-primary mb-3">Tambah Penarikan</a>
 
         @if (session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
 
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        Total Tarikan
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Rp {{ number_format($totals->total_amount, 0, ',', '.') }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        Tarikan Sudah Disetoran
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Rp {{ number_format($totals->total_setor, 0, ',', '.') }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        Tarikan Belum Disetoran
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Rp {{ number_format($totals->total_belum_setor, 0, ',', '.') }}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr>
         <table class="table table-bordered">
             <thead>
                 <tr>

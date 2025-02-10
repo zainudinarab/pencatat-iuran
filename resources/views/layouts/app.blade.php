@@ -36,16 +36,48 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
                         @auth
-                            <li class="nav-item">
-                                <a class="nav-link" href="/penarikan">penarikan</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/setoran">setoran</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/confirm-setoran">confirm setoran</a>
-                            </li>
+                            @php
+                                $role = Auth::user()->role;
+                            @endphp
+
+                            <ul class="navbar-nav">
+                                {{-- Menu untuk role warga --}}
+                                @if ($role == 'warga')
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/profile">Profil</a>
+                                    </li>
+                                @endif
+
+                                {{-- Menu untuk role petugas, bendahara, dan rt --}}
+                                @if (in_array($role, ['petugas', 'bendahara', 'rt']))
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/residents">Data Warga</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/penarikan">Penarikan</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/setoran">Setoran</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/confirm-setoran">Confirm Setoran</a>
+                                    </li>
+                                    {{-- Menu untuk pengeluaran --}}
+                                    @if ($role == 'bendahara')
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/pengeluaran">Pengeluaran</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/saldo">Saldo</a>
+                                        </li>
+                                    @endif
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/laporan">Laporan</a>
+                                    </li>
+                                @endif
+                            </ul>
                         @endauth
+
                     </ul>
 
                     <!-- Right Side Of Navbar -->

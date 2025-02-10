@@ -15,7 +15,7 @@ class SetoranController extends Controller
         if ($user->role === 'bendahara') {
             $setorans = Setoran::with('petugas')->get();
         } else {
-            $setorans = Setoran::with('petugas')->where('petugas_id', $user->id)->get();
+            $setorans = Setoran::with('petugas', 'bendahara')->where('petugas_id', $user->id)->get();
         }
         // $setorans = Setoran::with('bendahara')->get();
         return view('setoran.index', compact('setorans'));
@@ -53,26 +53,21 @@ class SetoranController extends Controller
             'tanggal_setoran' => $request->tanggal_setoran,
             'status' => 'pending',  // You can modify this as needed
         ]);
-// dd($setoran);
+        // dd($setoran);
         // Update the related penarikans to associate them with the new setoran_id
         Penarikan::whereIn('id', $request->penarikan_ids)
             ->update(['setoran_id' => $setoran->id]);
-
-
         return redirect()->route('setoran.index')->with('success', 'Setoran berhasil ditambahkan.');
     }
-
     public function show(Setoran $setoran)
     {
         return view('setoran.show', compact('setoran'));
     }
-
     public function edit(Setoran $setoran)
     {
         $bendaharas = User::all();
         return view('setoran.edit', compact('setoran', 'bendaharas'));
     }
-
     public function update(Request $request, Setoran $setoran)
     {
         $request->validate([
@@ -81,19 +76,14 @@ class SetoranController extends Controller
             'tanggal_setoran' => 'required|date',
             'status' => 'required|in:pending,confirmed',
         ]);
-
         $setoran->update($request->all());
-
         return redirect()->route('setoran.index')->with('success', 'Setoran berhasil diperbarui.');
     }
-
     public function destroy(Setoran $setoran)
     {
         $setoran->delete();
-
         return redirect()->route('setoran.index')->with('success', 'Setoran berhasil dihapus.');
     }
-
     public function confirmSetoran(Request $request, $id)
     {
         $request->validate([
@@ -120,20 +110,20 @@ class SetoranController extends Controller
         return redirect()->route('setoran.index')->with('success', 'Setoran berhasil dikonfirmasi.');
     }
     public function handleConfirmation(Request $request)
-{
-    $setoran = Setoran::findOrFail($request->setoran_id);
+    {
+        $setoran = Setoran::findOrFail($request->setoran_id);
 
-    // Create a confirmation record
-    KonfirmasiSetoran::create([
-        'setoran_id' => $setoran->id,
-        'bendahara_id' => auth()->id(),
-        'status' => $request->status, // 'diterima' or 'ditolak'
-        'catatan' => $request->catatan,
-    ]);
+        // Create a confirmation record
+        KonfirmasiSetoran::create([
+            'setoran_id' => $setoran->id,
+            'bendahara_id' => auth()->id(),
+            'status' => $request->status, // 'diterima' or 'ditolak'
+            'catatan' => $request->catatan,
+        ]);
 
-    // Update the setoran status based on confirmation
-    $setoran->update(['status' => $request->status == 'diterima' ? 'confirmed' : 'pending']);
+        // Update the setoran status based on confirmation
+        $setoran->update(['status' => $request->status == 'diterima' ? 'confirmed' : 'pending']);
 
-    return redirect()->route('confirm.setoran')->with($request->status == 'diterima' ? 'success' : 'error', 'Setoran telah ' . ($request->status == 'diterima' ? 'dikukuhkan' : 'ditolak'));
-}
+        return redirect()->route('confirm.setoran')->with($request->status == 'diterima' ? 'success' : 'error', 'Setoran telah ' . ($request->status == 'diterima' ? 'dikukuhkan' : 'ditolak'));
+    }
 }
