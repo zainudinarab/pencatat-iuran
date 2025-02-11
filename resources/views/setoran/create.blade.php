@@ -84,8 +84,8 @@
         <form action="{{ route('setoran.store') }}" method="POST">
             @csrf
             <div class="mb-3">
-                <label for="petugas_id" class="form-label">ID Petugas:</label>
-                <input type="number" name="petugas_id" class="form-control" value="{{ $petugas->id }}" required>
+                {{-- <label for="petugas_id" class="form-label">ID Petugas:</label> --}}
+                <input type="number" name="petugas_id" class="form-control" value="{{ $petugas->id }}" required hidden>
             </div>
             <div class="mb-3">
                 <label for="tanggal_setoran" class="form-label">Tanggal Setoran:</label>
@@ -109,7 +109,7 @@
             </div>
             <div class="mb-3">
                 <div id="total_setoran"></div>
-                <input type="text" name="total_amount" id="total_amount" value="">
+                <input type="text" name="total_amount" id="total_amount" value="" hidden>
             </div>
             <!-- Hidden input to store the selected penarikan IDs -->
             {{-- <input type="text" name="penarikan_ids_hidden" id="penarikan_ids_hidden" value=""> --}}

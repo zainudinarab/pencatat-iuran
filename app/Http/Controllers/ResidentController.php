@@ -123,4 +123,9 @@ class ResidentController extends Controller
 
         return view('residents.amount', compact('residents', 'formattedNumber', 'totalAmount'));
     }
+    // detail
+    public function detail(Resident $resident)
+    {
+        return view('residents.show', compact('resident'));
+    }
 }

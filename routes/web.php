@@ -13,9 +13,14 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+Route::get('/', [ResidentController::class, 'totaAamount']);
+// show
+Route::get('/detail/{resident}', [ResidentController::class, 'detail'])->name('residents.detail');
+Route::get('/penarikan-by-residents', [PenarikanController::class, 'getresidents'])->name('penarikan.getresidents');
+
 
 // Auth::routes();
 Auth::routes([
@@ -48,7 +53,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('penarikan', PenarikanController::class);
     Route::resource('setoran', SetoranController::class);
     Route::resource('pengeluaran', PengeluaranController::class);
-    Route::get('/penarikan-by-residents', [PenarikanController::class, 'getresidents'])->name('penarikan.getresidents');
+
     Route::get('confirm-setoran', [KonfirmasiSetoranController::class, 'confirmSetoran'])->name('confirm.setoran');
     Route::put('/setoran/{setoran}/konfirmasi', [KonfirmasiSetoranController::class, 'konfirmasi'])->name('setoran.konfirmasi');
     Route::get('/saldo', [SaldoController::class, 'index'])->name('saldo.index');

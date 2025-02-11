@@ -106,6 +106,9 @@
                                     <li class="nav-item">
                                         <a class="nav-link" href="/setoran">Setoran</a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/laporan">laporan</a>
+                                    </li>
                                 @endif
 
                                 {{-- Menu khusus untuk bendahara --}}
@@ -134,7 +137,11 @@
                                         </ul>
                                     </li>
                                 @endif
-
+                                @if ($user->hasRole('Warga'))
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/total-amount">lihat Penarikan</a>
+                                    </li>
+                                @endif
                                 {{-- Menu yang bisa diakses oleh semua role yang memiliki permission view_profile --}}
                                 @if ($user->can('view profile'))
                                     <li class="nav-item">
