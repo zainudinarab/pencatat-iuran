@@ -6,15 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Resident extends Model
 {
+    // Menentukan kolom primary key dan tipe data
+    protected $primaryKey = 'id';
+    public $incrementing = false; // Menyatakan bahwa ID tidak auto increment
+    protected $keyType = 'string'; // Menyatakan tipe data ID adalah string
+
     protected $fillable = [
-        'name',
-        'phone_number',
-        'slug',
-        'blok',
-        'nomor_rumah',
-        'RT',
-        'RW',
-        'address',
+        'id', 'name', 'phone_number', 'slug', 'blok', 'nomor_rumah', 'RT', 'RW', 'address',
     ];
 
     public function penarikan()

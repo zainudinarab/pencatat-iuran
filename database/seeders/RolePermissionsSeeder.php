@@ -73,11 +73,30 @@ class RolePermissionsSeeder extends Seeder
             'password' => bcrypt('admin'),
         ]);
         $adminUser->assignRole('Admin');
-        $normalUser = User::create([
-            'name' => 'Normal User',
-            'email' => 'warga@user.com',
-            'password' => bcrypt('warga'),
-        ]);
-        $normalUser->assignRole('Warga');
+        // Membuat user untuk Ketua
+$ketuaUser = User::create([
+    'name' => 'Ketua',
+    'email' => 'ketua@gmail.com',
+    'password' => bcrypt('ketua123'),
+]);
+$ketuaUser->assignRole('Ketua');
+
+// Membuat user untuk Bendahara
+$bendaharaUser = User::create([
+    'name' => 'Bendahara',
+    'email' => 'bendahara@gmail.com',
+    'password' => bcrypt('bendahara123'),
+]);
+$bendaharaUser->assignRole('Bendahara');
+
+// Membuat user untuk Petugas
+$petugasUser = User::create([
+    'name' => 'zainudin',
+    'email' => 'zainudinarab@gmail.com',
+    'password' => bcrypt('arab'),
+]);
+$petugasUser->assignRole('Petugas');
+
+       
     }
 }

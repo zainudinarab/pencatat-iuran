@@ -42,6 +42,7 @@ class ResidentController extends Controller
 
         // Simpan data dengan slug yang sudah dibuat dan nomor rumah yang diformat
         Resident::create([
+            'id'=>$request->input('slug'),
             'name' => $request->input('name'),
             'phone_number' => $request->input('phone_number'),
             'slug' => $request->input('slug'), // Gabungan blok dan nomor rumah

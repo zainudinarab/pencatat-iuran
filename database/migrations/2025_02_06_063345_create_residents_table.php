@@ -11,8 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Schema::create('residents', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('name');
+        //     $table->string('phone_number');
+        //     $table->string('slug')->unique();
+        //     $table->string('blok');
+        //     $table->string('nomor_rumah');
+        //     $table->string('RT');
+        //     $table->string('RW');
+        //     $table->text('address');
+        //     $table->timestamps();
+        // });
         Schema::create('residents', function (Blueprint $table) {
-            $table->id();
+            $table->string('id', 3)->primary(); // Menggunakan string dengan panjang 3 karakter sebagai primary key
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('name');
             $table->string('phone_number');
             $table->string('slug')->unique();
@@ -23,6 +36,7 @@ return new class extends Migration
             $table->text('address');
             $table->timestamps();
         });
+        
     }
 
     /**

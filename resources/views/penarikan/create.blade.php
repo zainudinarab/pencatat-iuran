@@ -209,7 +209,7 @@
                     const suggestionItem = document.createElement("div");
                     suggestionItem.textContent = `${resident.slug} - ${resident.name}`;
                     suggestionItem.addEventListener("click", function() {
-                        selectedMemberInput.value = `${resident.slug} - ${resident.name}`;
+                        selectedMemberInput.value = `${resident.id} - ${resident.name}`;
                         searchInput.value = "";
                         suggestionsBox.style.display = "none";
                         // Mengisi data id ke hidden input

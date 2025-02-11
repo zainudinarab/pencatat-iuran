@@ -96,6 +96,7 @@ class ResidentsTableSeeder extends Seeder
 
         foreach ($data as $resident) {
             Resident::create([
+                'id'=>$resident['slug'],
                 'name' => $resident['name'],
                 'phone_number' => '', // Kosongkan seperti permintaan Anda
                 'slug' => $resident['slug'],
