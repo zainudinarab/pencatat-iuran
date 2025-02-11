@@ -100,6 +100,10 @@
                                         <a class="nav-link" href="/penarikan">Penarikan</a>
                                     </li>
                                     <li class="nav-item">
+                                        <a class="nav-link" href="/total-amount">lihat Penarikan</a>
+                                    </li>
+
+                                    <li class="nav-item">
                                         <a class="nav-link" href="/setoran">Setoran</a>
                                     </li>
                                 @endif

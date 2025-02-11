@@ -54,9 +54,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/saldo', [SaldoController::class, 'index'])->name('saldo.index');
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::resource('penarikan', PenarikanController::class);
-    // Route::middleware('role:petugas,bendahara')->group(function () {
-
-    // });
+    Route::get('/total-amount', [ResidentController::class, 'totaAamount']);
 });
 // middleware('auth')
 Route::middleware(['auth', 'role:Admin'])->group(function () {

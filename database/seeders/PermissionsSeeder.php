@@ -50,5 +50,10 @@ class PermissionsSeeder extends Seeder
         Permission::create(['name' => 'create log_saldos']);
         Permission::create(['name' => 'edit log_saldos']);
         Permission::create(['name' => 'delete log_saldos']);
+        // Permissions untuk tabel profils
+        Permission::create(['name' => 'view profils']);
+        Permission::create(['name' => 'create profils']);
+        Permission::create(['name' => 'edit profils']);
+        Permission::create(['name' => 'delete profils']);
     }
 }

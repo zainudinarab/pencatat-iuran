@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Resident;
+use Carbon\Carbon;
 
 class ResidentController extends Controller
 {
@@ -107,5 +108,19 @@ class ResidentController extends Controller
         $resident->delete();
 
         return redirect()->route('residents.index')->with('success', 'Resident berhasil dihapus.');
+    }
+    public function totaAamount(Request $request)
+    {
+        $date = Carbon::parse('2025-01-01'); // Tanggal yang ingin dihitung
+        $now = Carbon::now(); // Tanggal sekarang
+
+        // Menghitung selisih hari
+        $totalHari = $date->diffInDays($now);
+        $formattedNumber = number_format($totalHari, 0, ',', '.');
+        // dd($formattedNumber);
+        $totalAmount = $formattedNumber * 1000;
+        $residents = Resident::withSum('penarikan', 'amount')->get();
+
+        return view('residents.amount', compact('residents', 'formattedNumber', 'totalAmount'));
     }
 }

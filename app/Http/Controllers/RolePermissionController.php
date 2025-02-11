@@ -94,4 +94,6 @@ class RolePermissionController extends Controller
         $permission->delete();
         return redirect()->route('permissions.index')->with('success', 'Permission berhasil dihapus!');
     }
+    // permissions.create
+
 }
