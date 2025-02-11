@@ -35,7 +35,7 @@
                                 @if ($setoran->status == 'pending')
                                     <button class="btn btn-success btn-sm" data-bs-toggle="modal"
                                         data-bs-target="#confirmModal" data-id="{{ $setoran->id }}"
-                                        data-petugas="{{ $setoran->petugas_id }}"
+                                        data-petugas="{{ $setoran->petugas->name }}"
                                         data-amount="{{ $setoran->total_amount }}">Konfirmasi</button>
                                 @else
                                     <span class="text-muted">Konfirmasi sudah dilakukan</span>
@@ -72,7 +72,12 @@
                         <td>{{ $konfirmasi->setoran->petugas->name ?? 'Tidak Diketahui' }}</td>
                         <!-- Menampilkan Nama Petugas -->
                         <td>{{ $konfirmasi->bendahara->name }}</td> <!-- Menampilkan Nama Bendahara -->
-                        <td>{{ ucfirst($konfirmasi->status) }}</td> <!-- Menampilkan Status -->
+
+                        <td>
+                            <span class="badge {{ $konfirmasi->status == 'confirmed' ? 'bg-success' : 'bg-warning' }}">
+                                {{ ucfirst($konfirmasi->status) }}
+                            </span>
+                        </td> <!-- Menampilkan Status -->
                         <td>{{ $konfirmasi->catatan }}</td> <!-- Menampilkan Catatan -->
                         <td>{{ $konfirmasi->created_at->format('d-m-Y H:i:s') }}</td> <!-- Menampilkan Tanggal -->
                     </tr>
@@ -102,8 +107,8 @@
 
                         <input type="hidden" name="setoran_id" id="setoran_id">
 
-                        <p>Petugas: <span id="petugas_name"></span></p>
-                        <p>Total Setoran: Rp <span id="amount"></span></p>
+                        <p>Petugas: <span id="petugas_name" style="font-weight: bold;"></span></p>
+                        <p>Total Setoran: <span id="amount" style="font-weight: bold;"></span></p>
 
                         <div class="form-group">
                             <label for="catatan">Catatan (Opsional)</label>
@@ -147,6 +152,13 @@
                 var setoranId = button.getAttribute('data-id');
                 var petugas = button.getAttribute('data-petugas');
                 var amount = button.getAttribute('data-amount');
+
+                var rupiah = new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                }).format(amount);
                 // Set URL action form
                 const actionUrl =
                     `/setoran/${setoranId}/konfirmasi`; // Sesuaikan dengan URL rute di aplikasi kamu
@@ -154,7 +166,10 @@
                 // Isi data di dalam modal
                 document.getElementById('setoran_id').value = setoranId; // Isi id setoran ke input hidden
                 document.getElementById('petugas_name').textContent = petugas; // Isi nama petugas
-                document.getElementById('amount').textContent = amount; // Isi jumlah setoran
+
+
+                // document.getElementById('amount').textContent = amount; // Isi jumlah setoran
+                document.getElementById('amount').textContent = rupiah;
             });
         });
     </script>

@@ -35,20 +35,20 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
-                        @auth
+                        {{-- @auth
                             @php
                                 $role = Auth::user()->role;
                             @endphp
 
                             <ul class="navbar-nav">
-                                {{-- Menu untuk role warga --}}
+
                                 @if ($role == 'warga')
                                     <li class="nav-item">
                                         <a class="nav-link" href="/profile">Profil</a>
                                     </li>
                                 @endif
 
-                                {{-- Menu untuk role petugas, bendahara, dan rt --}}
+
                                 @if (in_array($role, ['petugas', 'bendahara', 'rt']))
                                     <li class="nav-item">
                                         <a class="nav-link" href="/residents">Data Warga</a>
@@ -62,7 +62,7 @@
                                     <li class="nav-item">
                                         <a class="nav-link" href="/confirm-setoran">Confirm Setoran</a>
                                     </li>
-                                    {{-- Menu untuk pengeluaran --}}
+
                                     @if ($role == 'bendahara')
                                         <li class="nav-item">
                                             <a class="nav-link" href="/pengeluaran">Pengeluaran</a>
@@ -73,6 +73,68 @@
                                     @endif
                                     <li class="nav-item">
                                         <a class="nav-link" href="/laporan">Laporan</a>
+                                    </li>
+                                @endif
+                            </ul>
+                        @endauth --}}
+
+                        @auth
+                            @php
+                                $user = Auth::user();
+                            @endphp
+
+                            <ul class="navbar-nav">
+                                {{-- Menu untuk role warga --}}
+                                @if ($user->hasRole('warga'))
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/profile">Profil</a>
+                                    </li>
+                                @endif
+
+                                {{-- Menu untuk role petugas, bendahara, dan rt --}}
+                                @if ($user->hasRole('petugas') || $user->hasRole('bendahara') || $user->hasRole('rt') || $user->hasRole('Admin'))
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/residents">Data Warga</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/penarikan">Penarikan</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/setoran">Setoran</a>
+                                    </li>
+                                @endif
+
+                                {{-- Menu khusus untuk bendahara --}}
+                                @if ($user->hasRole('bendahara') || $user->hasRole('Admin'))
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/pengeluaran">Pengeluaran</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/saldo">Saldo</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/confirm-setoran">Confirm Setoran</a>
+                                    </li>
+                                @endif
+
+                                {{-- Menu untuk admin --}}
+                                @if ($user->hasRole('Admin'))
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" id="navbarRoleDropdown"
+                                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            management User
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="navbarRoleDropdown">
+                                            <li><a class="dropdown-item" href="/roles">Manajemen Role</a></li>
+                                            <li><a class="dropdown-item" href="/permissions">Manajemen permissions</a></li>
+                                        </ul>
+                                    </li>
+                                @endif
+
+                                {{-- Menu yang bisa diakses oleh semua role yang memiliki permission view_profile --}}
+                                @if ($user->can('view profile'))
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/profile">Profil</a>
                                     </li>
                                 @endif
                             </ul>

@@ -21,4 +21,8 @@ class Resident extends Model
     {
         return $this->hasMany(Penarikan::class);
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

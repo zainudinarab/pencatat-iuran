@@ -25,7 +25,7 @@ class SetoranController extends Controller
     {
         $bendaharas = User::all();
         // by user login
-        $petugas = User::where('role', 'petugas')->where('id', auth()->id())->first();
+        $petugas = User::where('id', auth()->id())->first();
         // penarikan  by petugas_id
         $penarikan = Penarikan::where('petugas_id', $petugas->id)
             ->with('resident') // Eager load the 'resident' relationship

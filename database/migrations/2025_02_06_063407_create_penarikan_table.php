@@ -19,7 +19,6 @@ return new class extends Migration
             $table->date('tanggal_penarikan');
             $table->foreignId('setoran_id')->nullable()->constrained('setorans')->onDelete('set null'); // Menggunakan set null
             $table->timestamps();
-            
         });
     }
 

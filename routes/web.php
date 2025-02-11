@@ -8,6 +8,9 @@ use App\Http\Controllers\KonfirmasiSetoranController;
 use App\Http\Controllers\PengeluaranController;
 use App\Http\Controllers\SaldoController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileController;
 
 
 Route::get('/', function () {
@@ -19,7 +22,7 @@ Auth::routes([
     'register' => true
 ]);
 
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
 // Route::middleware(['auth', 'role:petugas,bendahara'])->group(function () {
 //     Route::get('/dashboard', function () {
 //         return view('dashboard');
@@ -31,12 +34,15 @@ Auth::routes([
 // Route yang memerlukan autentikasi
 Route::middleware('auth')->group(function () {
     // Dashboard
-    Route::get('/dashboard', function () {
+    Route::get('/home', function () {
         return view('home');
-    })->name('dashboard');
-    // Penarikan Iuran
+    })->name('home');
 
-    // Setoran
+
+    // Menampilkan halaman profil
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::post('/profile/update-name', [ProfileController::class, 'updateName'])->name('profile.updateName');
+    Route::post('/profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
     Route::resource('setoran', SetoranController::class);
     Route::resource('residents', ResidentController::class);
     Route::resource('penarikan', PenarikanController::class);
@@ -53,3 +59,21 @@ Route::middleware('auth')->group(function () {
     // });
 });
 // middleware('auth')
+Route::middleware(['auth', 'role:Admin'])->group(function () {
+
+    Route::get('managemen-users', [UserController::class, 'index'])->name('users.index');
+    Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
+    // Semua route berikut hanya dapat diakses oleh Admin
+    Route::get('roles', [RolePermissionController::class, 'index'])->name('roles.index');
+    Route::get('roles/create', [RolePermissionController::class, 'create'])->name('roles.create');
+    Route::post('roles', [RolePermissionController::class, 'store'])->name('roles.store');
+    Route::get('roles/{role}/edit', [RolePermissionController::class, 'edit'])->name('roles.edit');
+    Route::put('roles/{role}', [RolePermissionController::class, 'update'])->name('roles.update');
+    Route::delete('roles/{role}', [RolePermissionController::class, 'destroy'])->name('roles.destroy');
+    Route::get('permissions', [RolePermissionController::class, 'permissionsIndex'])->name('permissions.index');
+    Route::get('permissions/create', [RolePermissionController::class, 'permissionsCreate'])->name('permissions.create');
+    Route::post('permissions', [RolePermissionController::class, 'permissionsStore'])->name('permissions.store');
+    // permissions.destroy
+    Route::delete('permissions/{permission}', [RolePermissionController::class, 'permissionsDestroy'])->name('permissions.destroy');
+});
