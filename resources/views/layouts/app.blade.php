@@ -99,7 +99,7 @@
                                     <li class="nav-item">
                                         <a class="nav-link" href="/penarikan">Penarikan</a>
                                     </li>
-                                    detail-penarikan
+
                                     <li class="nav-item">
                                         <a class="nav-link" href="/detail-penarikan">priode-tar</a>
                                     </li>
