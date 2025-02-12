@@ -63,6 +63,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('penarikan', PenarikanController::class);
     Route::get('download-penarikan-excel', [PenarikanController::class, 'downloadExcel']);
     Route::get('download-penarikan-pdf', [PenarikanController::class, 'downloadPDF']);
+    Route::get('/detail-penarikan', [PenarikanController::class, 'tarikan'])->name('penarikan.tarikan');
 });
 // middleware('auth')
 Route::middleware(['auth', 'role:Admin'])->group(function () {

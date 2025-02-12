@@ -134,4 +134,38 @@ class PenarikanController extends Controller
 
         return $pdf->download('penarikans.pdf');
     }
+    // indextarikan
+    public function tarikan()
+    {
+        // Ambil semua data penarikan dengan relasi petugas, resident, dan setoran
+        $penarikans = Penarikan::with('petugas', 'resident', 'setoran')->get();
+
+        // Kelompokkan penarikan berdasarkan resident_id
+        $groupedPenarikans = $penarikans->groupBy('resident_id');
+
+        // Inisialisasi array untuk menyusun data untuk tabel
+        $tableData = [];
+        $no = 1; // Nomor urut
+
+        // Loop untuk setiap kelompok berdasarkan resident_id
+        foreach ($groupedPenarikans as $residentId => $penarikansGroup) {
+            // Menyiapkan data untuk satu baris (untuk satu resident_id)
+            $row = ['no' => $no, 'resident_id' => $residentId];
+
+            // Loop untuk setiap penarikan dalam kelompok dan beri nama tarikan1, tarikan2, dll.
+            $tarikanIndex = 1;
+            foreach ($penarikansGroup as $penarikan) {
+                // Tambahkan data tarikan dalam format tarikan1, tarikan2, dll.
+                $row['tarikan' . $tarikanIndex] = $penarikan->amount;
+                $tarikanIndex++;
+            }
+
+            // Tambahkan data row ke tableData
+            $tableData[] = $row;
+            $no++;
+        }
+
+        // Kirim data ke view
+        return view('penarikan.tarikan', compact('tableData'));
+    }
 }
