@@ -61,7 +61,10 @@
             <!-- Form Grup: Jumlah Pembayaran -->
             <div class="mb-3">
                 <label for="amount" class="form-label">Jumlah Pembayaran (Rp)</label>
-                <input type="text" id="amount" class="form-control" placeholder="Masukkan Jumlah Pembayaran" required>
+                <input type="number" id="amount" class="form-control" placeholder="Masukkan Jumlah Pembayaran" required>
+                {{-- tipe bumber --}}
+
+
             </div>
             <input type="text" name="amount" id="amount_numeric" class="form-control" hidden>
 
@@ -116,7 +119,7 @@
             value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
             // Menambahkan "Rp" di depan
-            return 'Rp ' + value;
+            return value;
         }
 
         // Event listener untuk memformat inputan setiap kali pengguna mengetik
@@ -141,48 +144,7 @@
             }
         });
         // Menggunakan data `residents` yang sudah dikirim dari controller
-        let payments = [{
-                memberId: "1",
-                memberName: "Andi Pratama",
-                amount: 500000
-            },
 
-            {
-                memberId: "1",
-                memberName: "Andi Pratama",
-                amount: 600000
-            },
-            {
-                memberId: "2",
-                memberName: "Andi Pratama",
-                amount: 700000
-            },
-            {
-                memberId: 2,
-                memberName: "Budi Santoso",
-                amount: 700000
-            },
-            {
-                memberId: "A003",
-                memberName: "Citra Dewi",
-                amount: 400000
-            },
-            {
-                memberId: "A004",
-                memberName: "Dewi Lestari",
-                amount: 600000
-            },
-            {
-                memberId: "A005",
-                memberName: "Eko Prasetyo",
-                amount: 800000
-            },
-            {
-                memberId: "A001",
-                memberName: "Andi Pratama",
-                amount: 200000
-            }
-        ];
         const residents = @json($residents); // Mengonversi data `residents` dari PHP ke JavaScript
 
         const searchInput = document.getElementById("member-search");
@@ -199,7 +161,7 @@
 
             // Pastikan 'resident.id' diubah ke string sebelum menggunakan 'toLowerCase'
             const filteredResidents = residents.filter(resident =>
-                String(resident.slug).toLowerCase().includes(query) ||
+                String(resident.id).toLowerCase().includes(query) ||
                 resident.name.toLowerCase().includes(query)
             );
 
@@ -207,7 +169,7 @@
                 suggestionsBox.innerHTML = "";
                 filteredResidents.forEach(resident => {
                     const suggestionItem = document.createElement("div");
-                    suggestionItem.textContent = `${resident.slug} - ${resident.name}`;
+                    suggestionItem.textContent = `${resident.id} - ${resident.name}`;
                     suggestionItem.addEventListener("click", function() {
                         selectedMemberInput.value = `${resident.id} - ${resident.name}`;
                         searchInput.value = "";
@@ -246,44 +208,6 @@
             document.getElementById("tanggal_penarikan").value = formattedDate;
         }
 
-        // Fungsi untuk menyaring dan menampilkan data pembayaran berdasarkan anggota terpilih
-        // function renderFilteredPaymentTable(memberId) {
-        //     const tbody = document.querySelector("#payment-table tbody");
-        //     tbody.innerHTML = "";
-
-        //     // Saring data pembayaran sesuai dengan id anggota
-        //     const filteredPayments = payments.filter(payment => payment.memberId === memberId);
-
-        //     if (filteredPayments.length === 0) {
-        //         const row = document.createElement("tr");
-        //         const cell = document.createElement("td");
-        //         cell.colSpan = 4;
-        //         cell.textContent = "Tidak ada data pembayaran untuk anggota ini.";
-        //         cell.style.textAlign = "center";
-        //         row.appendChild(cell);
-        //         tbody.appendChild(row);
-        //         return;
-        //     }
-
-        //     filteredPayments.forEach((payment, index) => {
-        //         const row = document.createElement("tr");
-        //         const noCell = document.createElement("td");
-        //         noCell.textContent = index + 1;
-        //         const memberIdCell = document.createElement("td");
-        //         memberIdCell.textContent = payment.memberId;
-        //         const memberNameCell = document.createElement("td");
-        //         memberNameCell.textContent = payment.memberName;
-        //         const amountCell = document.createElement("td");
-        //         amountCell.textContent = payment.amount.toLocaleString("id-ID");
-
-        //         row.appendChild(noCell);
-        //         row.appendChild(memberIdCell);
-        //         row.appendChild(memberNameCell);
-        //         row.appendChild(amountCell);
-
-        //         tbody.appendChild(row);
-        //     });
-        // }
 
         function renderFilteredPaymentTable(resident_id) {
             // Pastikan resident_id ada, lalu panggil API dengan parameter resident_id

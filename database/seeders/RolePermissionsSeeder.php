@@ -74,29 +74,27 @@ class RolePermissionsSeeder extends Seeder
         ]);
         $adminUser->assignRole('Admin');
         // Membuat user untuk Ketua
-$ketuaUser = User::create([
-    'name' => 'Ketua',
-    'email' => 'ketua@gmail.com',
-    'password' => bcrypt('ketua123'),
-]);
-$ketuaUser->assignRole('Ketua');
+        $ketuaUser = User::create([
+            'name' => 'Ketua',
+            'email' => 'ketua@gmail.com',
+            'password' => bcrypt('ketua123'),
+        ]);
+        $ketuaUser->assignRole('Ketua');
 
-// Membuat user untuk Bendahara
-$bendaharaUser = User::create([
-    'name' => 'Bendahara',
-    'email' => 'bendahara@gmail.com',
-    'password' => bcrypt('bendahara123'),
-]);
-$bendaharaUser->assignRole('Bendahara');
+        // Membuat user untuk Bendahara
+        $bendaharaUser = User::create([
+            'name' => 'Khoirul Wahyudi',
+            'email' => 'khoirul@gmail.com',
+            'password' => bcrypt('12345'),
+        ]);
+        $bendaharaUser->assignRole('Bendahara');
 
-// Membuat user untuk Petugas
-$petugasUser = User::create([
-    'name' => 'zainudin',
-    'email' => 'zainudinarab@gmail.com',
-    'password' => bcrypt('arab'),
-]);
-$petugasUser->assignRole('Petugas');
-
-       
+        // Membuat user untuk Petugas
+        $petugasUser = User::create([
+            'name' => 'zainudin',
+            'email' => 'zainudinarab@gmail.com',
+            'password' => bcrypt('arab'),
+        ]);
+        $petugasUser->assignRole('Petugas');
     }
 }

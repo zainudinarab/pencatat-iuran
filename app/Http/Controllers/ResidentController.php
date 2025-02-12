@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Resident;
 use Carbon\Carbon;
 
+use App\Models\Penarikan;
+
 class ResidentController extends Controller
 {
     public function index()
@@ -23,14 +25,14 @@ class ResidentController extends Controller
     {
         // Validasi input
         $validated = $request->validate([
+            'id' => 'required|string|unique:residents,id',  // Validasi slug harus unik
             'name' => 'required|string|max:255',
-            'phone_number' => 'required|string|max:20',
-            'slug' => 'required|string|unique:residents,slug',  // Validasi slug harus unik
+            'phone_number' => 'nullable|string|max:20',
             'blok' => 'required|string|max:50',
             'nomor_rumah' => 'required|string|max:10',
             'RT' => 'required|string|max:5',
             'RW' => 'required|string|max:5',
-            'address' => 'required|string',
+
         ]);
 
         // Menambahkan angka 0 di depan nomor rumah jika hanya 1 digit
@@ -42,10 +44,9 @@ class ResidentController extends Controller
 
         // Simpan data dengan slug yang sudah dibuat dan nomor rumah yang diformat
         Resident::create([
-            'id'=>$request->input('slug'),
+            'id' => $request->input('id'),
             'name' => $request->input('name'),
             'phone_number' => $request->input('phone_number'),
-            'slug' => $request->input('slug'), // Gabungan blok dan nomor rumah
             'blok' => strtoupper($request->input('blok')),  // Pastikan blok diubah ke kapital
             'nomor_rumah' => $nomorRumah,  // Nomor rumah yang sudah diformat
             'RT' => $request->input('RT'),
@@ -71,33 +72,19 @@ class ResidentController extends Controller
         // Validasi input
         $request->validate([
             'name' => 'required|string|max:255',
-            'phone_number' => 'required|string|max:20',
-            'slug' => 'required|string|unique:residents,slug',  // Validasi slug harus unik
-            'blok' => 'required|string|max:50',
-            'nomor_rumah' => 'required|string|max:10',
+            'phone_number' => 'nullable|string|max:20',
             'RT' => 'required|string|max:5',
             'RW' => 'required|string|max:5',
-            'address' => 'required|string',
+
         ]);
-
-        // Menambahkan angka 0 di depan nomor rumah jika hanya 1 digit
-        $nomorRumah = $request->input('nomor_rumah');
-        if (strlen($nomorRumah) == 1) {
-            $nomorRumah = '0' . $nomorRumah; // Menambahkan angka 0 jika hanya 1 digit
-        }
-
-
 
         // Update data dengan slug yang sudah dibuat dan nomor rumah yang diformat
         $resident->update([
             'name' => $request->input('name'),
-            'phone_number' => $request->input('phone_number'),
-            'slug' => $request->input('slug'),  // Gabungan blok dan nomor rumah
-            'blok' => strtoupper($request->input('blok')),  // Pastikan blok diubah ke kapital
-            'nomor_rumah' => $nomorRumah,  // Nomor rumah yang sudah diformat
+            'phone_number' => $request->input('phone_number') ?? $resident->phone_number,
             'RT' => $request->input('RT'),
             'RW' => $request->input('RW'),
-            'address' => $request->input('address'),
+            'address' => $request->input('address') ?? $resident->address,
         ]);
 
         // Redirect setelah berhasil update
@@ -126,7 +113,14 @@ class ResidentController extends Controller
     }
     // detail
     public function detail(Resident $resident)
+
     {
-        return view('residents.show', compact('resident'));
+
+        $resident_id = $resident->id;
+        $penarikans = Penarikan::with(['petugas', 'resident', 'setoran'])
+            ->where('resident_id', $resident_id)
+            ->get();
+        // dd($penarikans);
+        return view('residents.detail', compact('penarikans'));
     }
 }

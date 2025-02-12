@@ -28,7 +28,6 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('name');
             $table->string('phone_number');
-            $table->string('slug')->unique();
             $table->string('blok');
             $table->string('nomor_rumah');
             $table->string('RT');
@@ -36,7 +35,6 @@ return new class extends Migration
             $table->text('address');
             $table->timestamps();
         });
-        
     }
 
     /**

@@ -92,27 +92,35 @@
                                 @endif
 
                                 {{-- Menu untuk role petugas, bendahara, dan rt --}}
-                                @if ($user->hasRole('petugas') || $user->hasRole('bendahara') || $user->hasRole('rt') || $user->hasRole('Admin'))
+                                @if ($user->hasRole('Petugas') || $user->hasRole('Bendahara') || $user->hasRole('rt') || $user->hasRole('Admin'))
                                     <li class="nav-item">
                                         <a class="nav-link" href="/residents">Data Warga</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="/penarikan">Penarikan</a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/total-amount">lihat Penarikan</a>
-                                    </li>
+
 
                                     <li class="nav-item">
                                         <a class="nav-link" href="/setoran">Setoran</a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/laporan">laporan</a>
+
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" id="navbarlaporanDropdown"
+                                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Laporan
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="navbarlaporanDropdown">
+                                            <li><a class="dropdown-item" href="/laporan">Laporan RT</a></li>
+                                            <li><a class="dropdown-item" href="/laporan/tarikan-by-petugas">Laporan
+                                                    Petugas</a></li>
+                                        </ul>
                                     </li>
                                 @endif
 
                                 {{-- Menu khusus untuk bendahara --}}
-                                @if ($user->hasRole('bendahara') || $user->hasRole('Admin'))
+
+                                @if ($user->hasRole('Bendahara') || $user->hasRole('Admin'))
                                     <li class="nav-item">
                                         <a class="nav-link" href="/pengeluaran">Pengeluaran</a>
                                     </li>
@@ -138,9 +146,6 @@
                                     </li>
                                 @endif
                                 @if ($user->hasRole('Warga'))
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/total-amount">lihat Penarikan</a>
-                                    </li>
                                 @endif
                                 {{-- Menu yang bisa diakses oleh semua role yang memiliki permission view_profile --}}
                                 @if ($user->can('view profile'))

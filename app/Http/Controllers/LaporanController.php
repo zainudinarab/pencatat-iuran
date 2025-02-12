@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Penarikan;
 use App\Models\Resident;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LaporanController extends Controller
 {
@@ -31,5 +32,25 @@ class LaporanController extends Controller
             ->get();
         // Mengembalikan tampilan dengan data totals
         return view('laporan.index', compact('totals'));
+    }
+    // tarikabypetugas
+    public function tarikabypetugas()
+    {
+        $totals = Penarikan::with('petugas') // Memuat relasi 'petugas' untuk mengambil nama
+            ->select(
+                'petugas_id',
+                DB::raw('
+                SUM(CASE WHEN setoran_id IS NOT NULL THEN amount ELSE 0 END) AS total_setor'),
+                DB::raw('
+                SUM(CASE WHEN setoran_id IS NULL THEN amount ELSE 0 END) AS total_belum_setor'),
+                DB::raw('SUM(amount) as total_amount')
+            )
+            ->groupBy('petugas_id')
+            ->orderBy('petugas_id', 'asc')
+            ->get();
+
+
+        // Mengembalikan tampilan dengan data totals
+        return view('laporan.petugas', compact('totals'));
     }
 }

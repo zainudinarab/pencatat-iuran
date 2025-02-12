@@ -101,7 +101,7 @@
                                 <input type="checkbox" name="penarikan_ids[]" value="{{ $penarikanItem->id }}"
                                     data-amount="{{ $penarikanItem->amount }}">
                                 {{ $penarikanItem->resident->slug }}- {{ $penarikanItem->resident->name }} - Rp
-                                {{ number_format($penarikanItem->amount, 2) }}
+                                {{ number_format($penarikanItem->amount, 0) }}
                             </div>
                         @endif
                     @endforeach

@@ -10,12 +10,29 @@
                 {{ session('success') }}
             </div>
         @endif
+        <!-- Menampilkan Pesan Error -->
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
 
+            </div>
+        @endif
         <!-- Form untuk edit resident -->
         <form action="{{ route('residents.update', $resident->id) }}" method="POST">
             @csrf
             @method('PUT') <!-- Menyatakan bahwa ini adalah request PUT untuk update -->
-
+            <div class="form-group">
+                <label for="id">Rumah</label>
+                <input type="text" name="id" id="id" class="form-control" value="{{ old('id', $resident->id) }}"
+                    readonly>
+                @error('id')
+                    <div class="alert alert-danger">{{ $message }}</div>
+                @enderror
+            </div>
             <div class="form-group">
                 <label for="name">Nama</label>
                 <input type="text" name="name" id="name" class="form-control"
@@ -25,30 +42,12 @@
             <div class="form-group">
                 <label for="phone_number">Nomor Telepon</label>
                 <input type="text" name="phone_number" id="phone_number" class="form-control"
-                    value="{{ old('phone_number', $resident->phone_number) }}" required>
+                    value="{{ old('phone_number', $resident->phone_number) }}">
             </div>
 
 
-            <div class="form-group">
-                <label for="blok">Blok</label>
-                <input type="text" name="blok" id="blok" class="form-control"
-                    value="{{ old('blok', $resident->blok) }}" required maxlength="1" pattern="[A-Z]"
-                    oninput="this.value = this.value.toUpperCase()">
-            </div>
 
-            <div class="form-group">
-                <label for="nomor_rumah">Nomor Rumah</label>
-                <input type="text" name="nomor_rumah" id="nomor_rumah" class="form-control"
-                    value="{{ old('nomor_rumah', $resident->nomor_rumah) }}" required maxlength="2" pattern="\d{1,2}">
-            </div>
-            <div class="form-group">
-                <label for="slug">Slug</label>
-                <input type="text" name="slug" id="slug" class="form-control" value="{{ old('slug') }}"
-                    readonly>
-                @error('slug')
-                    <div class="alert alert-danger">{{ $message }}</div>
-                @enderror
-            </div>
+
             <div class="form-group">
                 <label for="RT">RT</label>
                 <input type="text" name="RT" id="RT" class="form-control"
@@ -63,7 +62,7 @@
 
             <div class="form-group">
                 <label for="address">Alamat</label>
-                <textarea name="address" id="address" class="form-control" required>{{ old('address', $resident->address) }}</textarea>
+                <textarea name="address" id="address" class="form-control">{{ old('address', $resident->address) }}</textarea>
             </div>
 
             <button type="submit" class="btn btn-primary mt-3">Perbarui</button>

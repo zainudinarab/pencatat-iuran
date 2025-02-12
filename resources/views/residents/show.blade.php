@@ -26,11 +26,8 @@
 @push('js')
     <script>
         window.onload = function() {
-            // Ambil ID dari URL
-            var residentId = {{ $resident->id }};
+            var residentId = @json($resident->id);
             console.log(residentId);
-
-            // Panggil fungsi JavaScript dengan ID yang diambil
             renderFilteredPaymentTable(residentId);
         };
 

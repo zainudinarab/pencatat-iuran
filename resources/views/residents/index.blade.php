@@ -18,11 +18,9 @@
             <thead>
                 <tr>
                     <th>No.</th>
+                    <th>ID</th>
                     <th>Nama</th>
                     <th>Nomor Telepon</th>
-                    <th>Slug</th>
-                    <th>Blok</th>
-                    <th>Nomor Rumah</th>
                     <th>RT</th>
                     <th>RW</th>
                     <th>Alamat</th>
@@ -33,11 +31,10 @@
                 @foreach ($residents as $index => $resident)
                     <tr>
                         <td>{{ $residents->firstItem() + $index }}</td>
+                        <td>{{ $resident->id }}</td>
                         <td>{{ $resident->name }}</td>
                         <td>{{ $resident->phone_number }}</td>
-                        <td>{{ $resident->slug }}</td>
-                        <td>{{ $resident->blok }}</td>
-                        <td>{{ $resident->nomor_rumah }}</td>
+
                         <td>{{ $resident->RT }}</td>
                         <td>{{ $resident->RW }}</td>
                         <td>{{ $resident->address }}</td>

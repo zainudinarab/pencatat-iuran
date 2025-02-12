@@ -16,17 +16,20 @@
         <!-- Form untuk input resident -->
         <form action="{{ route('residents.store') }}" method="POST">
             @csrf
+            <div class="form-group">
+                <label for="id">ID</label>
+                <input type="text" name="id" id="id" class="form-control" value="{{ old('id') }}" readonly>
+                @error('id')
+                    <div class="alert alert-danger">{{ $message }}</div>
+                @enderror
+            </div>
 
             <div class="form-group">
                 <label for="name">Nama</label>
-                <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" required>
+                <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}"
+                    required>
             </div>
 
-            <div class="form-group">
-                <label for="phone_number">Nomor Telepon</label>
-                <input type="text" name="phone_number" id="phone_number" class="form-control"
-                    value="{{ old('phone_number') }}" required>
-            </div>
 
 
 
@@ -41,14 +44,7 @@
                 <input type="number" name="nomor_rumah" id="nomor_rumah" class="form-control"
                     value="{{ old('nomor_rumah') }}" required maxlength="2" pattern="\d{1,2}">
             </div>
-            <div class="form-group">
-                <label for="slug">Slug</label>
-                <input type="text" name="slug" id="slug" class="form-control" value="{{ old('slug') }}"
-                    readonly>
-                @error('slug')
-                    <div class="alert alert-danger">{{ $message }}</div>
-                @enderror
-            </div>
+
             <div class="form-group">
                 <label for="RT">RT</label>
                 <input type="number" name="RT" id="RT" class="form-control" value="{{ old('RT') }}"
@@ -65,6 +61,11 @@
                 <label for="address">Alamat</label>
                 <textarea name="address" id="address" class="form-control" required>{{ old('address') }}</textarea>
             </div>
+            <div class="form-group">
+                <label for="phone_number">Nomor Telepon</label>
+                <input type="text" name="phone_number" id="phone_number" class="form-control"
+                    value="{{ old('phone_number') }}">
+            </div>
 
             <button type="submit" class="btn btn-primary mt-3">Simpan</button>
         </form>
@@ -72,10 +73,12 @@
 @endsection
 @push('js')
     <script>
-        document.getElementById('blok').addEventListener('input', generateSlug);
-        document.getElementById('nomor_rumah').addEventListener('input', generateSlug);
+        document.getElementById('blok').addEventListener('input', generateId);
+        document.getElementById('nomor_rumah').addEventListener('input', generateId);
 
-        function generateSlug() {
+
+
+        function generateId() {
             var blok = document.getElementById('blok').value.toUpperCase(); // Ubah blok menjadi huruf kapital
             var nomorRumah = document.getElementById('nomor_rumah').value;
 
@@ -84,8 +87,8 @@
                 nomorRumah = '0' + nomorRumah;
             }
 
-            var slug = blok + nomorRumah;
-            document.getElementById('slug').value = slug; // Isi field slug dengan slug yang dihasilkan
+            var id = blok + nomorRumah;
+            document.getElementById('id').value = id; // Isi field slug dengan slug yang dihasilkan
         }
     </script>
 @endpush
