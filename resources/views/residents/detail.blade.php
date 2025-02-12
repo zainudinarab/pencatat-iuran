@@ -24,7 +24,9 @@
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $penarikan->petugas->name }}</td>
                         <td>{{ $penarikan->resident->name }}</td>
-                        <td>{{ $penarikan->amount }}</td>
+                        <td>Rp {{ number_format($penarikan->amount, 0, ',', '.') }}</td>
+
+
                         <td>{{ \Carbon\Carbon::parse($penarikan->tanggal_penarikan)->format('d M Y') }}
 
                         </td>

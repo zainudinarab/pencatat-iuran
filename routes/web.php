@@ -61,6 +61,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/tarikan-by-petugas', [LaporanController::class, 'tarikabypetugas'])->name('laporan.tarikabypetugas');
     Route::resource('penarikan', PenarikanController::class);
+    Route::get('download-penarikan-excel', [PenarikanController::class, 'downloadExcel']);
+    Route::get('download-penarikan-pdf', [PenarikanController::class, 'downloadPDF']);
 });
 // middleware('auth')
 Route::middleware(['auth', 'role:Admin'])->group(function () {

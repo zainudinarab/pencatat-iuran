@@ -8,13 +8,16 @@ use App\Models\Resident;
 use App\Models\User;
 use App\Models\Setoran;
 use Illuminate\Container\Attributes\Auth;
+use App\Exports\PenarikanExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class PenarikanController extends Controller
 {
     public function index()
     {
         $user = auth()->user();
-       
+
         if ($user->role === 'bendahara') {
             $penarikans = Penarikan::with('petugas', 'resident', 'setoran')->get();
             $totals = Penarikan::selectRaw('
@@ -118,5 +121,17 @@ class PenarikanController extends Controller
         }
 
         return response()->json($penarikans); // Mengembalikan data dalam format JSON
+    }
+
+    public function downloadExcel()
+    {
+        return Excel::download(new PenarikanExport, 'penarikans.xlsx');
+    }
+    public function downloadPDF()
+    {
+        $penarikans = Penarikan::with('petugas', 'resident', 'setoran')->get();
+        $pdf = PDF::loadView('pdf.penarikan', compact('penarikans'));
+
+        return $pdf->download('penarikans.pdf');
     }
 }
