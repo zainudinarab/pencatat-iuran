@@ -20,7 +20,7 @@
                         <td>{{ $resident->id }}</td>
                         <td>{{ $resident->name }}</td>
                         <td>
-                            @if ($resident->penarikan_sum_amount !== 210000)
+                            @if ($resident->penarikan_sum_amount != 210000)
                                 @if ($totalAmount > $resident->penarikan_sum_amount)
                                     {{ number_format($totalAmount, 0, ',', '.') }} <span
                                         class="badge bg-danger">-{{ number_format($totalAmount - $resident->penarikan_sum_amount, 0, ',', '.') }}</span>
@@ -35,7 +35,7 @@
                         </td>
                         <td>
 
-                            @if ($resident->penarikan_sum_amount === 210000)
+                            @if ($resident->penarikan_sum_amount == 210000)
                                 {{ number_format($resident->penarikan_sum_amount, 0, ',', '.') }} <span
                                     class="badge bg-success">Lunas</span>
                             @else
