@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('pembayaran', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('house_id')->constrained()->onDelete('cascade'); // Rumah yang bayar
+            $table->foreignId('house_id')->constrained()->onDelete('cascade'); // Rumah yang membayar
             $table->decimal('total_amount', 12, 2);
             $table->enum('payment_method', ['manual', 'midtrans', 'xendit']);
-            $table->enum('status', ['pending', 'confirmed', 'failed'])->default('pending'); // Status pembayaran
+            $table->enum('status', ['confirmed', 'failed'])->default('confirmed'); // Langsung confirmed jika bayar ke ketua gang
+            $table->foreignId('collector_id')->nullable()->constrained('users')->onDelete('set null'); // Petugas penerima
+            $table->foreignId('setoran_id')->nullable()->constrained('setoran_petugas')->onDelete('set null'); // ID setoran (null jika belum disetor)
+            $table->enum('payment_source', ['resident', 'collector'])->default('resident'); // Sumber pembayaran
             $table->timestamps();
         });
     }

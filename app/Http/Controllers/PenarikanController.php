@@ -151,7 +151,6 @@ class PenarikanController extends Controller
         foreach ($groupedPenarikans as $residentId => $penarikansGroup) {
             // Menyiapkan data untuk satu baris (untuk satu resident_id)
             $row = ['no' => $no, 'resident_id' => $residentId];
-
             // Loop untuk setiap penarikan dalam kelompok dan beri nama tarikan1, tarikan2, dll.
             $tarikanIndex = 1;
             foreach ($penarikansGroup as $penarikan) {
@@ -164,7 +163,7 @@ class PenarikanController extends Controller
             $tableData[] = $row;
             $no++;
         }
-
+        // dd($tableData);
         // Kirim data ke view
         return view('penarikan.tarikan', compact('tableData'));
     }

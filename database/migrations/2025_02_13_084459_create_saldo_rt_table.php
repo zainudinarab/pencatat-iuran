@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('iuran', function (Blueprint $table) {
+        Schema::create('saldo_rt', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('rt_id')->constrained()->onDelete('cascade'); // RT yang memiliki saldo
+            $table->decimal('total_saldo', 15, 2)->default(0); // Saldo saat ini
             $table->timestamps();
         });
     }
@@ -22,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('iuran');
+        Schema::dropIfExists('saldo_rt');
     }
 };

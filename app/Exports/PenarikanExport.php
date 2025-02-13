@@ -18,17 +18,17 @@ class PenarikanExport implements FromCollection, WithHeadings, WithColumnFormatt
      */
     public function collection()
     {
-        return Penarikan::with('petugas', 'resident', 'setoran') // Menyertakan relasi
+        return Penarikan::with('petugas', 'resident') // Menyertakan relasi
             ->get()
             ->map(function ($penarikan) {
                 return [
                     $penarikan->id,
                     $penarikan->petugas->name ?? 'N/A',  // Asumsi nama petugas ada di field 'name' pada tabel users
-                    $penarikan->resident->name ?? 'N/A',  // Asumsi nama resident ada di field 'name' pada tabel residents
+                    $penarikan->resident_id ?? 'N/A',  // Asumsi nama resident ada di field 'name' pada tabel residents
                     $penarikan->amount,
 
                     $penarikan->tanggal_penarikan = Carbon::parse($penarikan->tanggal_penarikan), // Mengonversi menjadi Carbon
-                    $penarikan->setoran->amount ?? 'N/A',  // Asumsi ada field 'amount' pada tabel setoran
+                    // Asumsi ada field 'amount' pada tabel setoran
                 ];
             });
     }
@@ -46,7 +46,7 @@ class PenarikanExport implements FromCollection, WithHeadings, WithColumnFormatt
             'Nama Resident',
             'Jumlah Penarikan',
             'Tanggal Penarikan',
-            'Jumlah Setoran',
+
         ];
     }
 
@@ -59,7 +59,7 @@ class PenarikanExport implements FromCollection, WithHeadings, WithColumnFormatt
     {
         return [
             'D' => NumberFormat::FORMAT_NUMBER_00,  // Format jumlah penarikan sebagai angka dengan dua desimal
-            'F' => NumberFormat::FORMAT_NUMBER_00,  // Format jumlah setoran sebagai angka dengan dua desimal
+
         ];
     }
 }
