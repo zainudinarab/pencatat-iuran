@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\Auth;
 
 class PengeluaranController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:pengeluarans-view')->only('index', 'show');
+        $this->middleware('permission:pengeluarans-create')->only('create', 'store');
+        $this->middleware('permission:pengeluarans-edit')->only('edit', 'update');
+        $this->middleware('permission:pengeluarans-delete')->only('destroy');
+    }
     public function index()
     {
         // Get all pengeluarans for the authenticated user

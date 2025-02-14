@@ -11,6 +11,8 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+// RoleController
+use App\Http\Controllers\RoleController;
 
 
 // Route::get('/', function () {
@@ -49,6 +51,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::post('/profile/update-name', [ProfileController::class, 'updateName'])->name('profile.updateName');
     Route::post('/profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
+    
+});
+// role Admin dan Bendahara
+Route::middleware(['auth'])->group(function () {
     Route::resource('setoran', SetoranController::class);
     Route::resource('residents', ResidentController::class);
     Route::resource('penarikan', PenarikanController::class);
@@ -67,20 +73,24 @@ Route::middleware('auth')->group(function () {
 });
 // middleware('auth')
 Route::middleware(['auth', 'role:Admin'])->group(function () {
+    Route::resource('users', UserController::class);
+    Route::resource('roles', RoleController::class);
+    // permissions
+    Route::resource('permissions', RolePermissionController::class);
 
-    Route::get('managemen-users', [UserController::class, 'index'])->name('users.index');
-    Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
-    Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
+    // Route::get('managemen-users', [UserController::class, 'index'])->name('users.index');
+    // Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    // Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
     // Semua route berikut hanya dapat diakses oleh Admin
-    Route::get('roles', [RolePermissionController::class, 'index'])->name('roles.index');
-    Route::get('roles/create', [RolePermissionController::class, 'create'])->name('roles.create');
-    Route::post('roles', [RolePermissionController::class, 'store'])->name('roles.store');
-    Route::get('roles/{role}/edit', [RolePermissionController::class, 'edit'])->name('roles.edit');
-    Route::put('roles/{role}', [RolePermissionController::class, 'update'])->name('roles.update');
-    Route::delete('roles/{role}', [RolePermissionController::class, 'destroy'])->name('roles.destroy');
-    Route::get('permissions', [RolePermissionController::class, 'permissionsIndex'])->name('permissions.index');
-    Route::get('permissions/create', [RolePermissionController::class, 'permissionsCreate'])->name('permissions.create');
-    Route::post('permissions', [RolePermissionController::class, 'permissionsStore'])->name('permissions.store');
+    // Route::get('roles', [RolePermissionController::class, 'index'])->name('roles.index');
+    // Route::get('roles/create', [RolePermissionController::class, 'create'])->name('roles.create');
+    // Route::post('roles', [RolePermissionController::class, 'store'])->name('roles.store');
+    // Route::get('roles/{role}/edit', [RolePermissionController::class, 'edit'])->name('roles.edit');
+    // Route::put('roles/{role}', [RolePermissionController::class, 'update'])->name('roles.update');
+    // Route::delete('roles/{role}', [RolePermissionController::class, 'destroy'])->name('roles.destroy');
+    // Route::get('permissions', [RolePermissionController::class, 'permissionsIndex'])->name('permissions.index');
+    // Route::get('permissions/create', [RolePermissionController::class, 'permissionsCreate'])->name('permissions.create');
+    // Route::post('permissions', [RolePermissionController::class, 'permissionsStore'])->name('permissions.store');
     // permissions.destroy
-    Route::delete('permissions/{permission}', [RolePermissionController::class, 'permissionsDestroy'])->name('permissions.destroy');
+    // Route::delete('permissions/{permission}', [RolePermissionController::class, 'permissionsDestroy'])->name('permissions.destroy');
 });

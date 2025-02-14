@@ -10,9 +10,9 @@
                 {{ session('success') }}
             </div>
         @endif
-
+        @can('residents-create')
         <a href="{{ route('residents.create') }}" class="btn btn-primary mb-3">Tambah Resident</a>
-
+        @endcan
         <!-- Tabel untuk Menampilkan Data Resident -->
         <table class="table table-bordered table-striped">
             <thead>
@@ -39,13 +39,17 @@
                         <td>{{ $resident->RW }}</td>
                         <td>{{ $resident->address }}</td>
                         <td>
+                            @can('residents-edit')
                             <a href="{{ route('residents.edit', $resident->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                            @endcan
+                            @can('residents-delete')
                             <form action="{{ route('residents.destroy', $resident->id) }}" method="POST" class="d-inline"
                                 onsubmit="return confirm('Yakin ingin menghapus data ini?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
                             </form>
+                            @endcan
                         </td>
                     </tr>
                 @endforeach

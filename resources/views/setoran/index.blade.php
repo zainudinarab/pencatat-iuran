@@ -3,8 +3,11 @@
 @section('content')
     <div class="container">
         <h2>Daftar Setoran</h2>
-
+        @can('setorans-create')
         <a href="{{ route('setoran.create') }}" class="btn btn-primary mb-3">Tambah Setoran</a>
+        @endcan
+
+       
 
         @if (session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
@@ -35,6 +38,7 @@
                         <td>
                             @if ($setoran->status == 'pending')
                                 {{-- <a href="{{ route('setoran.edit', $setoran->id) }}" class="btn btn-warning btn-sm">Edit</a> --}}
+                                @can('setorans-delete')
                                 <form action="{{ route('setoran.destroy', $setoran->id) }}" method="POST"
                                     style="display:inline;">
                                     @csrf
@@ -42,6 +46,8 @@
                                     <button type="submit" class="btn btn-danger btn-sm"
                                         onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
                                 </form>
+                                @endcan
+                                
                             @endif
 
                         </td>

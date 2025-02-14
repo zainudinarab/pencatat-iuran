@@ -14,6 +14,13 @@ use Barryvdh\DomPDF\Facade as PDF;
 
 class PenarikanController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:penarikans-view')->only('index', 'show');
+        $this->middleware('permission:penarikans-create')->only('create', 'store');
+        $this->middleware('permission:penarikans-edit')->only('edit', 'update');
+        $this->middleware('permission:penarikans-delete')->only('destroy');
+    }
     public function index()
     {
         $user = auth()->user();

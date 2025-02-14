@@ -10,6 +10,14 @@ use App\Models\Penarikan;
 
 class ResidentController extends Controller
 {
+    function __construct()
+    {
+       // Permissions for the 'residents' table
+       $this->middleware('permission:residents-view')->only('index', 'show');
+       $this->middleware('permission:residents-create')->only('create', 'store');
+       $this->middleware('permission:residents-edit')->only('edit', 'update');
+       $this->middleware('permission:residents-delete')->only('destroy');
+    }
     public function index()
     {
         $residents = Resident::latest()->paginate(10);

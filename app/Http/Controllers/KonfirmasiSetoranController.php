@@ -10,6 +10,13 @@ use App\Models\LogSaldo;
 
 class KonfirmasiSetoranController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:konfirmasi_setorans-view')->only('index', 'show');
+        $this->middleware('permission:konfirmasi_setorans-create')->only('create', 'store');
+        $this->middleware('permission:konfirmasi_setorans-edit')->only('edit', 'update');
+        $this->middleware('permission:konfirmasi_setorans-delete')->only('destroy');
+    }
     public function confirmSetoran()
     {
         // Fetch setoran with 'pending' status

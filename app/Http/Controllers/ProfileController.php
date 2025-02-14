@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:profils-view')->only('index', 'show');
+        $this->middleware('permission:profils-create')->only('create', 'store');
+        $this->middleware('permission:profils-edit')->only('edit', 'update');
+        $this->middleware('permission:profils-delete')->only('destroy');
+    }
     public function __construct()
     {
         $this->middleware('auth');  // Pastikan pengguna sudah login

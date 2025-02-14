@@ -17,55 +17,85 @@ class RolePermissionsSeeder extends Seeder
 
         // Ketua role
         $ketua = Role::create(['name' => 'Ketua']);
-        $ketua->givePermissionTo([
-            'view residents',
-            'create residents',
-            'edit residents',
-            'view penarikans',
-            'create penarikans',
-            'edit penarikans',
-            'view setorans',
-            'create setorans',
-            'edit setorans',
-            'view pengeluarans',
-            'create pengeluarans',
-            'view profils',
-            'edit profils',
-            'view saldoes',
+       // Assign permissions to $ketua
+$ketua->givePermissionTo([
+    'residents-view',
+    'residents-create',
+    'residents-edit',
+    'residents-delete',
+    'penarikans-view',
+    'penarikans-create',
+    'penarikans-edit',
+    'penarikans-delete',
+    'setorans-view',
+    'setorans-create',
+    'setorans-edit',
+    'setorans-delete',
+    'konfirmasi_setorans-view',
+    'konfirmasi_setorans-create',
+    'konfirmasi_setorans-edit',
+    'konfirmasi_setorans-delete',
+    'pengeluarans-view',
+    'pengeluarans-create',
+    'pengeluarans-edit',
+    'pengeluarans-delete',
+    'saldones-view',
+    'log_saldos-view',
+    'profils-view',
+    'profils-create',
+    'profils-edit',
+    'profils-delete',
+    'laporan-view',
+]);
 
-        ]);
         // Bendahara role
         $bendahara = Role::create(['name' => 'Bendahara']);
         $bendahara->givePermissionTo([
-            'view residents',
-            'view penarikans',
-            'create penarikans',
-            'view setorans',
-            'create setorans',
-            'view saldoes',
-            'create saldoes',
-            'edit saldoes',
-            'view profils',
-            'edit profils',
-            'view saldoes',
+            'konfirmasi_setorans-view',
+    'konfirmasi_setorans-create',
+    'konfirmasi_setorans-edit',
+    'konfirmasi_setorans-delete',
+    'pengeluarans-view',
+    'pengeluarans-create',
+    'pengeluarans-edit',
+    'pengeluarans-delete',
+    'saldones-view',
+    'laporan-view',
+    'log_saldos-view',
+    
+    'profils-view',
+    'profils-create',
+    'profils-edit',
+    'profils-delete',
         ]);
 
         // Petugas role
         $petugas = Role::create(['name' => 'Petugas']);
         $petugas->givePermissionTo([
-            'view penarikans',
-            'view setorans',
-            'view pengeluarans',
-            'view saldoes',
-            'view profils',
-            'edit profils',
-            'view saldoes',
+            'residents-view',
+    'residents-create',
+    'residents-edit',
+    'residents-delete',
+    'penarikans-view',
+    'penarikans-create',
+    'penarikans-edit',
+    'penarikans-delete',
+    'setorans-view',
+    'setorans-create',
+    'setorans-edit',
+    'setorans-delete',
+    'profils-view',
+    'profils-create',
+    'profils-edit',
+    'profils-delete',
         ]);
         // Warga role
         $warga = Role::create(['name' => 'Warga']);
         $warga->givePermissionTo([
-            'view residents',
-            'view setorans',
+           'profils-view',
+    'profils-create',
+    'profils-edit',
+    'profils-delete',
         ]);
         $adminUser = User::create([
             'name' => 'Admin User',

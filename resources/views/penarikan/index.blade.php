@@ -3,8 +3,9 @@
 @section('content')
     <div class="container">
         <h2>Daftar Penarikan</h2>
-
+        @can('penarikans-create')
         <a href="{{ route('penarikan.create') }}" class="btn btn-primary mb-3">Tambah Penarikan</a>
+        @endcan
 
         @if (session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
@@ -71,8 +72,12 @@
                         <td>
                             {{-- jika $penarikan->setoran masih kosong maka dapat di edit atau di delete --}}
                             @if (!$penarikan->setoran)
+                                @can('penarikans-edit')
                                 <a href="{{ route('penarikan.edit', $penarikan->id) }}"
                                     class="btn btn-warning btn-sm">Edit</a>
+                                @endcan
+                                @can('penarikans-delete')
+                                
                                 <form action="{{ route('penarikan.destroy', $penarikan->id) }}" method="POST"
                                     style="display:inline;">
                                     @csrf
@@ -80,6 +85,7 @@
                                     <button type="submit" class="btn btn-danger btn-sm"
                                         onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
                                 </form>
+                                @endcan
                             @endif
 
                         </td>

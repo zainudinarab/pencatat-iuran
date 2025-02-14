@@ -10,6 +10,11 @@ use Illuminate\Http\Request;
 
 class SaldoController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:saldones-view')->only('index');
+      
+    }
     // Menampilkan saldo dan log saldo
     public function index()
     {

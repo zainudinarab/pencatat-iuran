@@ -9,6 +9,13 @@ use App\Models\Penarikan;
 
 class SetoranController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('permission:setorans-view')->only('index', 'show');
+        $this->middleware('permission:setorans-create')->only('create', 'store');
+        $this->middleware('permission:setorans-edit')->only('edit', 'update');
+        $this->middleware('permission:setorans-delete')->only('destroy');
+    }
     public function index()
     {
         $user = auth()->user();
