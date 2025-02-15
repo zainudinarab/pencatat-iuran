@@ -5,27 +5,40 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class LogSaldo extends Model
+class SaldoLog extends Model
 {
     use HasFactory;
 
-    // Define the table name
-    protected $table = 'log_saldos';
-
-    // Define the fillable fields
     protected $fillable = [
-        'user_id',
-        'jenis_transaksi',
-        'jumlah',
-        'saldo_terakhir',
+        'rt_id',
+        'amount',
+        'type',
+        'description',
+        'reference_id',
+        'reference_type'
     ];
 
-    // If you want to use timestamps, make sure you set them as true in the database or just remove this if no timestamps are required
-    public $timestamps = true;
-
-    // Define relationships
-    public function user()
+    /**
+     * Relasi SaldoLog ke RT
+     */
+    public function rt()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Rt::class, 'rt_id');
+    }
+
+    /**
+     * Simpan log transaksi saldo
+     */
+    public static function createLog($rt_id, $amount, $type, $description, $reference_id = null, $reference_type = null)
+    {
+        // Simpan log transaksi
+        self::create([
+            'rt_id' => $rt_id,
+            'amount' => $amount,
+            'type' => $type,
+            'description' => $description,
+            'reference_id' => $reference_id,
+            'reference_type' => $reference_type,
+        ]);
     }
 }

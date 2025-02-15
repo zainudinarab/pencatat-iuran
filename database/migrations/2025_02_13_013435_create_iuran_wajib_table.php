@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('iuran_wajib', function (Blueprint $table) {
+        Schema::create('iuran_wajibs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('rt_id')->constrained()->onDelete('cascade'); // RT terkait
             $table->integer('bill_month'); // Format YYYYMM (contoh: 202502 untuk Feb 2025)
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('iuran_wajib');
+        Schema::dropIfExists('iuran_wajibs');
     }
 };

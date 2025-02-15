@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pengeluaran_rt', function (Blueprint $table) {
+        Schema::create('pengeluaran_rts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('rt_id')->constrained()->onDelete('cascade'); // RT yang mengeluarkan uang
             $table->decimal('amount', 15, 2); // Jumlah uang yang dikeluarkan
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pengeluaran_rt');
+        Schema::dropIfExists('pengeluaran_rts');
     }
 };

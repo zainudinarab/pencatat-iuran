@@ -17,10 +17,7 @@ class ProfileController extends Controller
         $this->middleware('permission:profils-edit')->only('edit', 'update');
         $this->middleware('permission:profils-delete')->only('destroy');
     }
-    public function __construct()
-    {
-        $this->middleware('auth');  // Pastikan pengguna sudah login
-    }
+
 
     // Menampilkan halaman profil
     public function show()

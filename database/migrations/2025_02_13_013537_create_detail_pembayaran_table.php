@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('detail_pembayaran', function (Blueprint $table) {
+        Schema::create('detail_pembayarans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pembayaran_id')->constrained('pembayaran')->onDelete('cascade'); // Invoice terkait
             $table->foreignId('house_id')->constrained()->onDelete('cascade'); // Rumah yang membayar
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('detail_pembayaran');
+        Schema::dropIfExists('detail_pembayarans');
     }
 };

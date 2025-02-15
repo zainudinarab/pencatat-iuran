@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('saldo_log', function (Blueprint $table) {
+        Schema::create('saldo_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('rt_id')->constrained()->onDelete('cascade'); // RT terkait
             $table->decimal('amount', 15, 2); // Nominal perubahan saldo
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('saldo_log');
+        Schema::dropIfExists('saldo_logs');
     }
 };

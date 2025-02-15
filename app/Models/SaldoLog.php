@@ -5,23 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class IuranWajib extends Model
+class SaldoLog extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'rt_id',
-        'bill_month',
-        'name',
-        'amount'
+        'amount',
+        'type',
+        'description',
+        'reference_id',
+        'reference_type'
     ];
 
     /**
-     * Relasi antara IuranWajib dan RT
-     * IuranWajib dimiliki oleh satu RT
+     * Relasi SaldoLog ke RT
      */
     public function rt()
     {
-        return $this->belongsTo(Rt::class);
+        return $this->belongsTo(Rt::class, 'rt_id');
     }
 }

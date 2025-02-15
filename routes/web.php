@@ -8,12 +8,20 @@ use App\Http\Controllers\KonfirmasiSetoranController;
 use App\Http\Controllers\PengeluaranController;
 use App\Http\Controllers\SaldoController;
 use App\Http\Controllers\LaporanController;
-use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 // RoleController
 use App\Http\Controllers\RoleController;
-
+// manage RT
+use App\Http\Controllers\Rt\RtController;
+use App\Http\Controllers\Rt\GangController;
+use App\Http\Controllers\Rt\HouseController;
+use App\Http\Controllers\Rt\IuranWajibController;
+use App\Http\Controllers\Rt\PembayaranController;
+use App\Http\Controllers\Rt\SetoranPetugasController;
+use App\Http\Controllers\Rt\PengeluaranRtController;
+use App\Http\Controllers\Rt\HouseUserController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -51,7 +59,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::post('/profile/update-name', [ProfileController::class, 'updateName'])->name('profile.updateName');
     Route::post('/profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
-    
 });
 // role Admin dan Bendahara
 Route::middleware(['auth'])->group(function () {
@@ -70,27 +77,27 @@ Route::middleware(['auth'])->group(function () {
     Route::get('download-penarikan-excel', [PenarikanController::class, 'downloadExcel']);
     Route::get('download-penarikan-pdf', [PenarikanController::class, 'downloadPDF']);
     Route::get('/detail-penarikan', [PenarikanController::class, 'tarikan'])->name('penarikan.tarikan');
+    // manage RT
+    Route::prefix('manage-rt')->name('manage-rt.')->group(function () {
+        // Route untuk RT
+        Route::resource('rts', RtController::class);
+        Route::resource('gangs', GangController::class);
+        Route::resource('houses', HouseController::class);
+        Route::resource('iuran-wajib', IuranWajibController::class);
+        Route::resource('pembayaran', PembayaranController::class);
+        Route::resource('setoran', SetoranPetugasController::class);
+        Route::resource('setoran-petugas', SetoranPetugasController::class);
+        Route::resource('pengeluaran-rt', PengeluaranRtController::class);
+        // Route::resource('house-user', HouseUserController::class);
+        // index
+        Route::get('house-user', [HouseUserController::class, 'index'])->name('house-user.index');
+        Route::get('house-user/link', [HouseUserController::class, 'linkUserToHouse'])->name('house-user.link');
+        Route::post('house-user/link', [HouseUserController::class, 'storeLink'])->name('house-user.storeLink');
+    });
 });
 // middleware('auth')
 Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);
-    // permissions
-    Route::resource('permissions', RolePermissionController::class);
-
-    // Route::get('managemen-users', [UserController::class, 'index'])->name('users.index');
-    // Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
-    // Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
-    // Semua route berikut hanya dapat diakses oleh Admin
-    // Route::get('roles', [RolePermissionController::class, 'index'])->name('roles.index');
-    // Route::get('roles/create', [RolePermissionController::class, 'create'])->name('roles.create');
-    // Route::post('roles', [RolePermissionController::class, 'store'])->name('roles.store');
-    // Route::get('roles/{role}/edit', [RolePermissionController::class, 'edit'])->name('roles.edit');
-    // Route::put('roles/{role}', [RolePermissionController::class, 'update'])->name('roles.update');
-    // Route::delete('roles/{role}', [RolePermissionController::class, 'destroy'])->name('roles.destroy');
-    // Route::get('permissions', [RolePermissionController::class, 'permissionsIndex'])->name('permissions.index');
-    // Route::get('permissions/create', [RolePermissionController::class, 'permissionsCreate'])->name('permissions.create');
-    // Route::post('permissions', [RolePermissionController::class, 'permissionsStore'])->name('permissions.store');
-    // permissions.destroy
-    // Route::delete('permissions/{permission}', [RolePermissionController::class, 'permissionsDestroy'])->name('permissions.destroy');
+    Route::resource('permissions', PermissionController::class);
 });
