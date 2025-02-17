@@ -11,7 +11,7 @@ class HouseController extends Controller
 {
     public function index()
     {
-        $houses = House::with('rt')->paginate(10);
+        $houses = House::with('rt', 'gang')->paginate(10);
         return view('rt.manage_house.index', compact('houses'));
     }
 

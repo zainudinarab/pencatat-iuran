@@ -34,7 +34,7 @@
             @foreach ($pembayaran as $index => $pembayaranItem)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $pembayaranItem->house->address }}</td>
+                    <td>{{ $pembayaranItem->house_id }}</td>
                     <td>{{ number_format($pembayaranItem->total_amount, 2) }}</td>
                     <td>{{ ucfirst($pembayaranItem->payment_method) }}</td>
                     <td>{{ ucfirst($pembayaranItem->status) }}</td>

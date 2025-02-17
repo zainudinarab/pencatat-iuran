@@ -16,14 +16,9 @@ return new class extends Migration
             $table->char('blok', 1); // Kolom blok (1 karakter)
             $table->unsignedInteger('nomer'); // Kolom nomer (angka)
             $table->foreignId('rt_id')->constrained('rts')->onDelete('cascade'); // Hubungan ke tabel rts
+            $table->foreignId('gang_id')->constrained('gangs')->onDelete('cascade');
+            $table->string('name'); // Nama pemilik rumah
             $table->string('address'); // Alamat rumah
-            $table->string('owner_name'); // Nama pemilik rumah
-            $table->string('owner_phone'); // Nomor telepon pemilik rumah
-            $table->string('owner_email'); // Email pemilik rumah
-            $table->string('owner_address'); // Alamat pemilik rumah
-            $table->string('owner_id_card'); // Nomor KTP pemilik rumah
-            $table->string('owner_photo'); // Foto pemilik rumah
-            $table->string('owner_ktp_photo'); // Foto KTP pemilik rumah
             $table->timestamps();
             // Unique constraint untuk memastikan blok dan nomer tidak duplikat
             $table->unique(['blok', 'nomer']);

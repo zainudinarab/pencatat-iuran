@@ -26,6 +26,8 @@
                 <th>Blok</th>
                 <th>Nomer</th>
                 <th>RT</th>
+                <th>Gang</th>
+                <th>Pemilik rumah</th>
                 <th>Alamat</th>
                 <th>Aksi</th>
             </tr>
@@ -38,6 +40,8 @@
                     <td>{{ $house->blok }}</td>
                     <td>{{ $house->nomer }}</td>
                     <td>{{ $house->rt->name }}</td>
+                    <td>{{ $house->gang->name }}</td>
+                    <td>{{ $house->name }}</td>
                     <td>{{ $house->address }}</td>
                     <td>
                         <a class="btn btn-primary" href="{{ route('manage-rt.houses.edit', $house->id) }}">Edit</a>

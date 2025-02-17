@@ -16,7 +16,7 @@
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-
+    @stack('css')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
 
@@ -72,6 +72,8 @@
                                     {{-- @can('houses-view') --}}
                                     <li><a class="dropdown-item" href="/manage-rt/houses">Data Rumah</a></li>
                                     {{-- @endcan --}}
+
+                                    <li><a class="dropdown-item" href="/manage-rt/jenis-iuran">Data Jenis Iuran</a></li>
                                     <li><a class="dropdown-item" href="/manage-rt/iuran-wajib">Data Iuran Wajib</a></li>
                                     <li><a class="dropdown-item" href="/manage-rt/pembayaran">Data Pembayaran</a></li>
                                     <li><a class="dropdown-item" href="/manage-rt/setoran">Data Setoran</a></li>
@@ -172,6 +174,7 @@
         </main>
 
     </div>
+    @stack('js')
 </body>
 
 </html>

@@ -11,7 +11,7 @@ class House extends Model
 
     protected $primaryKey = 'id'; // ID gabungan blok dan nomer
     public $incrementing = false; // Menggunakan primary key yang bukan auto increment
-    protected $fillable = ['id', 'blok', 'nomer', 'rt_id', 'address'];
+    protected $fillable = ['id', 'blok', 'nomer', 'rt_id', 'gang_id', 'name', 'address'];
 
     /**
      * Relasi antara House dan RT
@@ -20,5 +20,14 @@ class House extends Model
     public function rt()
     {
         return $this->belongsTo(Rt::class);
+    }
+    /**
+     * Relasi antara House dan Gang
+     * Rumah dimiliki oleh satu Gang
+     * */
+    public function gang()
+    {
+        return $this->belongsTo(Gang::class);
+        // return $this->belongsTo(Gang::class, 'gang_id');
     }
 }

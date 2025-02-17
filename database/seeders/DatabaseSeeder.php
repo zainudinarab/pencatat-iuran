@@ -23,5 +23,9 @@ class DatabaseSeeder extends Seeder
         $this->call(PermissionsSeeder::class);
         $this->call(RolePermissionsSeeder::class);
         $this->call(PenarikanSeeder::class);
+        // RTSeeder
+        $this->call(RTSeeder::class);
+        // IuranSeed
+        $this->call(IuranSeed::class);
     }
 }

@@ -32,6 +32,6 @@ class DetailPembayaran extends Model
      */
     public function iuranWajib()
     {
-        return $this->belongsTo(IuranWajib::class);
+        return $this->belongsTo(IuranWajib::class, 'iuran_wajib_id');
     }
 }

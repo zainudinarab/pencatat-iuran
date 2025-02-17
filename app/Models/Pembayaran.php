@@ -41,10 +41,10 @@ class Pembayaran extends Model
      * Relasi antara Pembayaran dan Setoran
      * Pembayaran bisa memiliki satu Setoran
      */
-    // public function setoran()
-    // {
-    //     return $this->belongsTo(SetoranPetugas::class, 'setoran_id');
-    // }
+    public function setoran()
+    {
+        return $this->belongsTo(SetoranPetugas::class, 'setoran_id');
+    }
 
     /**
      * Relasi antara Pembayaran dan DetailPembayaran

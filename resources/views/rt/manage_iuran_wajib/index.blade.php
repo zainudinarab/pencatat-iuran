@@ -35,11 +35,10 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $iuran->rt->name }}</td>
                     <td>{{ \Carbon\Carbon::createFromFormat('Ym', $iuran->bill_month)->format('F Y') }}</td>
-                    <td>{{ $iuran->name }}</td>
+                    <td>{{ $iuran->jenisIuran->name }}</td>
                     <td>{{ number_format($iuran->amount, 2) }}</td>
                     <td>
                         <a class="btn btn-primary" href="{{ route('manage-rt.iuran-wajib.edit', $iuran->id) }}">Edit</a>
-
                         <form action="{{ route('manage-rt.iuran-wajib.destroy', $iuran->id) }}" method="POST"
                             style="display:inline-block;">
                             @csrf

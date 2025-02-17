@@ -40,18 +40,34 @@
                 @endforeach
             </select>
         </div>
-
-        <div class="form-group">
-            <label for="bill_month">Bulan Tagihan (YYYYMM):</label>
-            <input type="text" name="bill_month" class="form-control"
-                value="{{ old('bill_month', isset($iuranWajib) ? $iuranWajib->bill_month : '') }}" required maxlength="6">
+        <div class="mb-3">
+            <label for="start_month" class="form-label">Bulan Mulai</label>
+            <select class="form-control" id="start_month" name="start_month" required>
+                @foreach ($months as $month)
+                    <option value="{{ $month['value'] }}">{{ $month['label'] }}</option>
+                @endforeach
+            </select>
         </div>
 
-        <div class="form-group">
-            <label for="name">Nama Iuran:</label>
-            <input type="text" name="name" class="form-control"
-                value="{{ old('name', isset($iuranWajib) ? $iuranWajib->name : '') }}" required>
+        <div class="mb-3">
+            <label for="end_month" class="form-label">Bulan Selesai (Opsional)</label>
+            <select class="form-control" id="end_month" name="end_month">
+                <option value="">Pilih Bulan Selesai (jika lebih dari 1 bulan)</option>
+                @foreach ($months as $month)
+                    <option value="{{ $month['value'] }}">{{ $month['label'] }}</option>
+                @endforeach
+            </select>
         </div>
+
+        <div class="mb-3">
+            <label for="jenis_iuran_id" class="form-label">Jenis Iuran</label>
+            <select class="form-control" id="jenis_iuran_id" name="jenis_iuran_id" required>
+                @foreach ($jenisIuran as $jenis)
+                    <option value="{{ $jenis->id }}">{{ $jenis->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
 
         <div class="form-group">
             <label for="amount">Jumlah:</label>
@@ -64,3 +80,25 @@
             class="btn btn-primary">{{ isset($iuranWajib) ? 'Update Iuran Wajib' : 'Simpan Iuran Wajib' }}</button>
     </form>
 @endsection
+{{-- pus --}}
+@push('js')
+    <script>
+        document.getElementById('start_month').addEventListener('change', function() {
+            const startMonth = this.value;
+            const endMonthSelect = document.getElementById('end_month');
+
+            // Reset opsi end_month
+            endMonthSelect.innerHTML = '<option value="">Pilih Bulan Selesai (jika lebih dari 1 bulan)</option>';
+
+            // Tambahkan opsi yang valid
+            @foreach ($months as $month)
+                if ("{{ $month['value'] }}" >= startMonth) {
+                    const option = document.createElement('option');
+                    option.value = "{{ $month['value'] }}";
+                    option.text = "{{ $month['label'] }}";
+                    endMonthSelect.appendChild(option);
+                }
+            @endforeach
+        });
+    </script>
+@endpush

@@ -23,33 +23,63 @@ class PembayaranController extends Controller
         $houses = House::all();
 
         $iuranWajib = IuranWajib::all();
-        return view('rt.manage_pembayaran.form', compact('houses', 'iuranWajib'));
+        return view('rt.manage_pembayaran.create', compact('houses', 'iuranWajib'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        // dd($request->all());
+        $validated = $request->validate([
             'house_id' => 'required|exists:houses,id',
+            'iuran_wajib' => 'required|json',  // Validasi bahwa iuran_wajib adalah JSON
             'total_amount' => 'required|numeric',
-            'payment_method' => 'required|in:manual,midtrans,xendit',
-            'status' => 'required|in:confirmed,failed',
-            'collector_id' => 'nullable|exists:users,id',
-            'setoran_id' => 'nullable|exists:setoran_petugas,id',
-            'payment_source' => 'required|in:resident,collector',
         ]);
 
-        $pembayaran = Pembayaran::create($request->all());
+        // Menyimpan pembayaran
+        $pembayaran = Pembayaran::create([
+            'house_id' => $request->house_id,
+            'total_amount' => $request->total_amount,
+            'payment_method' => $request->payment_method,
+            'collector_id' => auth()->user()->id, // Petugas penerima,
 
-        // Simpan detail pembayaran berdasarkan iuran wajib
-        foreach ($request->iuran_wajib as $iuranId) {
+
+        ]);
+
+        // Mengonversi JSON kembali menjadi array di backend
+        $iuranWajib = json_decode($request->iuran_wajib, true);
+
+        // Menyimpan detail pembayaran
+        foreach ($iuranWajib as $id => $amount) {
             DetailPembayaran::create([
                 'pembayaran_id' => $pembayaran->id,
                 'house_id' => $request->house_id,
-                'iuran_wajib_id' => $iuranId,
-                'amount' => $request->total_amount / count($request->iuran_wajib),
-                'status' => 'pending'
+                'iuran_wajib_id' => $id,
+                'amount' => $amount,
+                'status' => 'confirmed',
             ]);
         }
+        // $request->validate([
+        //     'house_id' => 'required|exists:houses,id',
+        //     'total_amount' => 'required|numeric',
+        //     'payment_method' => 'required|in:manual,midtrans,xendit',
+        //     'status' => 'required|in:confirmed,failed',
+        //     'collector_id' => 'nullable|exists:users,id',
+        //     'setoran_id' => 'nullable|exists:setoran_petugas,id',
+        //     'payment_source' => 'required|in:resident,collector',
+        // ]);
+
+        // $pembayaran = Pembayaran::create($request->all());
+
+        // // Simpan detail pembayaran berdasarkan iuran wajib
+        // foreach ($request->iuran_wajib as $iuranId) {
+        //     DetailPembayaran::create([
+        //         'pembayaran_id' => $pembayaran->id,
+        //         'house_id' => $request->house_id,
+        //         'iuran_wajib_id' => $iuranId,
+        //         'amount' => $request->total_amount / count($request->iuran_wajib),
+        //         'status' => 'pending'
+        //     ]);
+        // }
 
         return redirect()->route('manage-rt.pembayaran.index')->with('success', 'Pembayaran berhasil ditambahkan');
     }
@@ -85,5 +115,44 @@ class PembayaranController extends Controller
     {
         Pembayaran::destroy($id);
         return redirect()->route('manage-rt.pembayaran.index')->with('success', 'Pembayaran berhasil dihapus');
+    }
+
+    public function getIuranBelumDibayar($house_id)
+    {
+        // Ambil rt_id berdasarkan house_id
+        $house = House::where('id', $house_id)->first();
+
+        if (!$house) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Rumah tidak ditemukan.'
+            ], 404);
+        }
+
+        $rt_id = $house->rt_id;
+        $iuranBelumDibayar = IuranWajib::leftJoin('detail_pembayarans', function ($join) use ($house_id) {
+            $join->on('iuran_wajibs.id', '=', 'detail_pembayarans.iuran_wajib_id')
+                ->where('detail_pembayarans.house_id', '=', $house_id);
+        })
+            ->whereNull('detail_pembayarans.id') // Hanya ambil iuran yang belum dibayar
+            ->where('iuran_wajibs.rt_id', '=', $rt_id) // Filter berdasarkan rt_id pada iuran_wajibs
+            ->select('iuran_wajibs.*')
+            ->with('jenisIuran') // Memuat relasi dengan jenis_iuran
+            ->get();
+        // Modifikasi key jika diperlukan
+        // Modifikasi key jika diperlukan
+        // Modifikasi key jika diperlukan
+        $iuranBelumDibayar = $iuranBelumDibayar->map(function ($item) {
+            // Mengambil nama jenis_iuran yang terkait
+            $item->jenis_iuran_id = $item->jenisIuran ? $item->jenisIuran->name : null;
+            unset($item->jenisIuran); // Hapus relasi jika tidak ingin menampilkan relasi lengkap
+            return $item;
+        });
+        // dd($iuranBelumDibayar);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Semua iuran yang belum dibayar berhasil diambil.',
+            'data' => $iuranBelumDibayar
+        ]);
     }
 }
