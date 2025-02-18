@@ -169,6 +169,8 @@
 
     <form id="payment-form" method="POST" action="{{ route('manage-rt.pembayaran.store') }}">
         @csrf
+        <input type="text" name="collector_id" value="{{ auth()->user()->id }}" hidden>
+        <input type="text" name="rt_id" value="{{ $roleData['rt_id'] }}" hidden>
         <div class="mb-3">
             <label for="selected-member" class="form-label">Rumah Terpilih</label>
             <input type="text" id="selected-houses" class="form-control" readonly placeholder="Rumah belum dipilih">
@@ -185,17 +187,20 @@
                 <p><strong>Total: Rp <span id="total-amount">0</span></strong></p>
             </div>
         </div>
-        <div class="mb-3">
+        {{-- payment_method --}}
+        <input type="text" name="payment_method" value="manual" hidden>
+        {{-- <div class="mb-3">
             <label for="payment_method">Metode Pembayaran:</label>
             <select name="payment_method" id="payment_method" required>
                 <option value="manual">Manual</option>
                 <option value="midtrans">Midtrans</option>
                 <option value="xendit">Xendit</option>
             </select>
-        </div>
+        </div> --}}
         <!-- Input untuk menampilkan total amount -->
-        <input type="text" name="total_amount" id="total-amount-input">
-        <button type="submit">Bayar</button>
+        <input type="text" name="total_amount" id="total-amount-input" hidden>
+        {{-- submit bostrap --}}
+        <button type="submit" class="btn btn-primary">Simpan</button>
     </form>
 @endsection
 

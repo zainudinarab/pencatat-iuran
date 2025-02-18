@@ -23,6 +23,7 @@ use App\Http\Controllers\Rt\SetoranPetugasController;
 use App\Http\Controllers\Rt\PengeluaranRtController;
 use App\Http\Controllers\Rt\HouseUserController;
 use App\Http\Controllers\Rt\JenisIuranController;
+use App\Http\Controllers\Rt\KonfirmasiSetoranPetugasController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -88,7 +89,8 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('pembayaran', PembayaranController::class);
         Route::get('belum-dibayar/{house_id}', [PembayaranController::class, 'getIuranBelumDibayar'])->name('pembayaran.getIuranBelumDibayar');
         Route::resource('setoran', SetoranPetugasController::class);
-        Route::resource('setoran-petugas', SetoranPetugasController::class);
+        Route::get('confirm-setoran-petugas', [KonfirmasiSetoranPetugasController::class, 'confirmSetoran']);
+        // Route::resource('setoran-petugas', SetoranPetugasController::class);
         Route::resource('pengeluaran-rt', PengeluaranRtController::class);
         Route::resource('jenis-iuran', JenisIuranController::class);
         // Route::resource('house-user', HouseUserController::class);

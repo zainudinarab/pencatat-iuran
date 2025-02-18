@@ -5,25 +5,47 @@ namespace App\Http\Controllers\Rt;
 use App\Http\Controllers\Controller;
 use App\Models\Pembayaran;
 use App\Models\House;
+use App\Models\User;
 use App\Models\IuranWajib;
 use App\Models\DetailPembayaran;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 
 class PembayaranController extends Controller
 {
     public function index()
     {
+
         $pembayaran = Pembayaran::with(['house', 'collector', 'setoran', 'detailPembayaran.iuranWajib'])->paginate(10);
         return view('rt.manage_pembayaran.index', compact('pembayaran'));
     }
 
     public function create()
     {
-        $houses = House::all();
+        $user = User::with('rtKetua', 'rtBendahara', 'gang')->find(Auth::id());
+        $roleData = $user->roleWithRT();
+
+        // dd($roleData);
+        if ($roleData['role'] == 'petugas-rt') {
+            // Jika role adalah 'petugas-rt', tampilkan data berdasarkan rt_id dan gang_id
+            $houses = House::where('rt_id', $roleData['rt_id'])
+                ->where('gang_id', $roleData['gang_id'])
+                ->get();
+        } elseif ($roleData['role'] == 'ketua-rt') {
+            // Jika role adalah 'ketua-rt', tampilkan data hanya berdasarkan rt_id
+            $houses = House::where('rt_id', $roleData['rt_id'])
+                ->get();
+        } else {
+            return redirect()->route('manage-rt.pembayaran.index') // Redirect ke halaman index pembayaran
+                ->with('error', 'Anda tidak Bagian pengurus  RT.');
+        }
+
+        // dd($houses);
+
 
         $iuranWajib = IuranWajib::all();
-        return view('rt.manage_pembayaran.create', compact('houses', 'iuranWajib'));
+        return view('rt.manage_pembayaran.create', compact('user', 'roleData', 'houses', 'iuranWajib'));
     }
 
     public function store(Request $request)
@@ -31,16 +53,20 @@ class PembayaranController extends Controller
         // dd($request->all());
         $validated = $request->validate([
             'house_id' => 'required|exists:houses,id',
+            'rt_id' => 'required|exists:rts,id',
+            'collector_id' => 'required|exists:users,id',
             'iuran_wajib' => 'required|json',  // Validasi bahwa iuran_wajib adalah JSON
             'total_amount' => 'required|numeric',
+
         ]);
 
         // Menyimpan pembayaran
         $pembayaran = Pembayaran::create([
             'house_id' => $request->house_id,
+            'rt_id' => $request->rt_id,
             'total_amount' => $request->total_amount,
             'payment_method' => $request->payment_method,
-            'collector_id' => auth()->user()->id, // Petugas penerima,
+            'collector_id' => Auth::user()->id, // Petugas penerima,
         ]);
 
         // Mengonversi JSON kembali menjadi array di backend

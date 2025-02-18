@@ -7,6 +7,8 @@ use App\Models\Setoran;
 use App\Models\User;
 use App\Models\Penarikan;
 
+use Illuminate\Support\Facades\Auth;
+
 class SetoranController extends Controller
 {
     function __construct()
@@ -18,7 +20,7 @@ class SetoranController extends Controller
     }
     public function index()
     {
-        $user = auth()->user();
+        $user = Auth::user();
         if ($user->role === 'bendahara') {
             $setorans = Setoran::with('petugas')->get();
         } else {
@@ -99,7 +101,7 @@ class SetoranController extends Controller
         ]);
 
         $setoran = Setoran::findOrFail($id);
-        $bendahara = auth()->user();
+        $bendahara = Auth::user();
 
         // Buat konfirmasi setoran
         $konfirmasi = KonfirmasiSetoran::create([

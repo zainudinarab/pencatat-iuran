@@ -80,12 +80,17 @@
 @section('content')
     <div class="container">
         <h2>Tambah Setoran</h2>
-
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
         <form action="{{ route('manage-rt.setoran.store') }}" method="POST">
             @csrf
             <div class="mb-3">
                 {{-- <label for="petugas_id" class="form-label">ID Petugas:</label> --}}
-                <input type="number" name="collector_id" class="form-control" value="{{ $petugas->id }}" required hidden>
+                <input type="number" name="collector_id" class="form-control" value="{{ $user->id }}">
+                <input type="number" name="rt_id" class="form-control" value="{{ $roleData['rt_id'] }}">
             </div>
             <div class="mb-3">
                 <label for="tanggal_setoran" class="form-label">Tanggal Setoran:</label>
@@ -96,14 +101,12 @@
                 <div class="checkbox-list" id="penarikan_list">
                     <!-- Data penarikan yang belum disetorkan akan dimuat di sini -->
                     @foreach ($pembayarans as $pembayaran)
-                       
-                            <div class="checkbox-item">
-                                <input type="checkbox" name="penarikan_ids[]" value="{{ $pembayaran->id }}"
-                                    data-amount="{{ $pembayaran->total_amount }}">
-                                {{ $pembayaran->house_id }}- {{ $pembayaran->collector->name }} - Rp
-                                {{ number_format($pembayaran->total_amount, 0) }}
-                            </div>
-                        
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="pembayaran_ids[]" value="{{ $pembayaran->id }}"
+                                data-amount="{{ $pembayaran->total_amount }}">
+                            {{ $pembayaran->house_id }}- {{ $pembayaran->collector->name }} - Rp
+                            {{ number_format($pembayaran->total_amount, 0) }}
+                        </div>
                     @endforeach
                 </div>
             </div>

@@ -7,7 +7,7 @@ use App\Models\Penarikan;
 use App\Models\Resident;
 use App\Models\User;
 use App\Models\Setoran;
-use Illuminate\Container\Attributes\Auth;
+use Illuminate\Support\Facades\Auth;
 use App\Exports\PenarikanExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade as PDF;
@@ -23,7 +23,8 @@ class PenarikanController extends Controller
     }
     public function index()
     {
-        $user = auth()->user();
+
+        $user = Auth::user();
 
         if ($user->role === 'bendahara') {
             $penarikans = Penarikan::with('petugas', 'resident', 'setoran')->get();
