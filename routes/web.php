@@ -90,6 +90,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('belum-dibayar/{house_id}', [PembayaranController::class, 'getIuranBelumDibayar'])->name('pembayaran.getIuranBelumDibayar');
         Route::resource('setoran', SetoranPetugasController::class);
         Route::get('confirm-setoran-petugas', [KonfirmasiSetoranPetugasController::class, 'confirmSetoran']);
+        // put
+        Route::put('/confirm-setoran-petugas/{setoran}/konfirmasi', [KonfirmasiSetoranPetugasController::class, 'konfirmasi'])->name('confirm.setoran.petugas');
         // Route::resource('setoran-petugas', SetoranPetugasController::class);
         Route::resource('pengeluaran-rt', PengeluaranRtController::class);
         Route::resource('jenis-iuran', JenisIuranController::class);

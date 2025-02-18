@@ -102,7 +102,29 @@ class User extends Authenticatable
         return ['role' => 'warga', 'rt_id' => null];
     }
 
-
+    public function getRoleWithRtAttribute()
+    {
+        $this->loadMissing('rtKetua', 'rtBendahara', 'gang');
+        $roles = [];
+    
+        if ($this->rtKetua) {
+            $roles[] = ['role' => 'ketua-rt', 'rt_id' => $this->rtKetua->id];
+        }
+    
+        if ($this->rtBendahara) {
+            $roles[] = ['role' => 'bendahara-rt', 'rt_id' => $this->rtBendahara->id];
+        }
+    
+        if ($this->gang) {
+            $roles[] = ['role' => 'petugas-rt', 'rt_id' => $this->gang->rt_id];
+        }
+    
+        if (empty($roles)) {
+            $roles[] = ['role' => 'warga', 'rt_id' => null];
+        }
+    
+        return $roles;
+    }
     // public function gang()
     // {
     //     return $this->hasOne(Gang::class, 'ketua_gang_id');

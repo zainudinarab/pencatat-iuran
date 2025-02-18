@@ -165,7 +165,7 @@
                 }).format(amount);
                 // Set URL action form
                 const actionUrl =
-                    `/setoran/${setoranId}/konfirmasi`; // Sesuaikan dengan URL rute di aplikasi kamu
+                    `/manage-rt/confirm-setoran-petugas/${setoranId}/konfirmasi`; // Sesuaikan dengan URL rute di aplikasi kamu
                 form.setAttribute('action', actionUrl)
                 // Isi data di dalam modal
                 document.getElementById('setoran_id').value = setoranId; // Isi id setoran ke input hidden
