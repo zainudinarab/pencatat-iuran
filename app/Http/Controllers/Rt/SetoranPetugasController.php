@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Rt;
 use App\Models\SaldoRt;
 use App\Models\SaldoLog;
+use App\Models\Pembayaran;
 use Illuminate\Http\Request;
 
 
@@ -21,10 +22,19 @@ class SetoranPetugasController extends Controller
 
     public function create()
     {
-        // Mengambil daftar petugas dan RT terkait untuk dropdown
-        $users = User::all();
-        $rts = Rt::all();
-        return view('rt.manage_setoran.form', compact('users', 'rts'));
+        $bendaharas = User::all();
+        // by user login
+        $petugas = User::where('id', auth()->id())->first();
+        // penarikan  by petugas_id
+        $pembayarans = Pembayaran::where('collector_id', $petugas->id)
+            ->whereNull('setoran_id') // Add condition where 'setoran_id' is null
+            ->with('collector','house') // Eager load the 'collector' relationship
+            ->get();
+
+        // dd($pembayarans);
+
+      
+        return view('rt.manage_setoran.create', compact('petugas', 'pembayarans'));
     }
 
     public function store(Request $request)

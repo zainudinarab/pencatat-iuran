@@ -41,8 +41,6 @@ class PembayaranController extends Controller
             'total_amount' => $request->total_amount,
             'payment_method' => $request->payment_method,
             'collector_id' => auth()->user()->id, // Petugas penerima,
-
-
         ]);
 
         // Mengonversi JSON kembali menjadi array di backend

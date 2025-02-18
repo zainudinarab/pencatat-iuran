@@ -25,7 +25,11 @@ class Pembayaran extends Model
      */
     public function house()
     {
-        return $this->belongsTo(House::class);
+        return $this->belongsTo(House::class, 'house_id', 'id');
+    }
+    public function pembayarans()
+    {
+        return $this->hasMany(Pembayaran::class, 'house_id', 'id');
     }
 
     /**

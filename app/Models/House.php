@@ -30,4 +30,8 @@ class House extends Model
         return $this->belongsTo(Gang::class);
         // return $this->belongsTo(Gang::class, 'gang_id');
     }
+    public function pembayarans()
+    {
+        return $this->hasMany(Pembayaran::class, 'house_id', 'id');
+    }
 }

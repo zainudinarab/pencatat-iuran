@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('pembayarans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('house_id')->constrained()->onDelete('cascade'); // Rumah yang membayar
+            $table->string('house_id');
+            $table->foreign('house_id')->references('id')->on('houses')->onDelete('cascade');
             $table->decimal('total_amount', 12, 2);
             $table->enum('payment_method', ['manual', 'midtrans', 'xendit']);
             $table->enum('status', ['confirmed', 'failed'])->default('confirmed'); // Langsung confirmed jika bayar ke ketua gang
