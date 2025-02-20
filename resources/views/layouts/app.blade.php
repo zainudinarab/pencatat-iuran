@@ -77,7 +77,8 @@
                                     <li><a class="dropdown-item" href="/manage-rt/iuran-wajib">Data Iuran Wajib</a></li>
                                     <li><a class="dropdown-item" href="/manage-rt/pembayaran">Data Pembayaran</a></li>
                                     <li><a class="dropdown-item" href="/manage-rt/setoran">Data Setoran</a></li>
-                                    <li><a class="dropdown-item" href="/manage-rt/setoran-petugas">Data Setoran Petugas</a>
+                                    <li><a class="dropdown-item" href="/manage-rt/confirm-setoran-petugas">Data Setoran
+                                            Petugas</a>
                                     </li>
                                     <li><a class="dropdown-item" href="/manage-rt/pengeluaran-rt">Data Pengeluaran RT</a>
                                     </li>

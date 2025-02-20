@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('konfirmasi_setoran_petugas', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('rt_id')->constrained('rts')->onDelete('cascade'); // Relasi ke tabel rts
             $table->foreignId('setoran_id')->constrained('setoran_petugas')->onDelete('cascade'); // Relasi ke tabel setoran_petugas
             $table->foreignId('bendahara_id')->constrained('users')->onDelete('cascade'); // Bendahara yang mengkonfirmasi
             $table->enum('status', ['pending', 'confirmed', 'ditolak'])->default('pending'); // Status konfirmasi

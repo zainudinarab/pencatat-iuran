@@ -25,21 +25,8 @@ class SaldoRt extends Model
     /**
      * Update Saldo RT (menambah atau mengurangi saldo)
      */
-    public static function updateSaldo($rt_id, $amount, $type)
+    public function logs()
     {
-        // Cek apakah sudah ada saldo untuk RT ini
-        $saldo = self::firstOrCreate(['rt_id' => $rt_id]);
-
-        // Update saldo berdasarkan jenis transaksi
-        if ($type == 'income') {
-            $saldo->total_saldo += $amount; // Menambah saldo jika income
-        } elseif ($type == 'expense') {
-            $saldo->total_saldo -= $amount; // Mengurangi saldo jika expense
-        }
-
-        // Simpan perubahan saldo
-        $saldo->save();
-
-        return $saldo;
+        return $this->hasMany(SaldoRtLog::class);
     }
 }

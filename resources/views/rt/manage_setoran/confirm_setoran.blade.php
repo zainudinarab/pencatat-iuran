@@ -4,9 +4,13 @@
 @section('content')
     <div class="container">
         <h2>Konfirmasi Setoran</h2>
-
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
         {{-- Check if there are any pending setoran --}}
-        @if ($setorans->isEmpty())
+        @if ($SetoranPetugas->isEmpty())
             <div class="alert alert-info">Tidak ada setoran yang perlu dikonfirmasi.</div>
         @else
             <table class="table">
@@ -22,7 +26,7 @@
                 </thead>
                 <tbody>
                     {{-- @dd($setorans) --}}
-                    @foreach ($setorans as $setoran)
+                    @foreach ($SetoranPetugas as $setoran)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ \Carbon\Carbon::parse($setoran->tanggal_setoran)->format('d M Y') }}</td>
@@ -33,8 +37,8 @@
 
                             </td>
                             <td>
-                                {{-- If status is 'pending', allow confirmation --}}
-                                @if ($setoran->status == 'pending')
+                                {{-- If status is 'pending',isBendahara=TRUE allow confirmation --}}
+                                @if ($setoran->status == 'pending' && $isBendahara)
                                     {{-- @can('konfirmasi_setorans-create') --}}
                                     <button class="btn btn-success btn-sm" data-bs-toggle="modal"
                                         data-bs-target="#confirmModal" data-id="{{ $setoran->id }}"
@@ -42,7 +46,7 @@
                                         data-amount="{{ $setoran->total_amount }}">Konfirmasi</button>
                                     {{-- @endcan --}}
                                 @else
-                                    <span class="text-muted">Konfirmasi sudah dilakukan</span>
+                                    <span class="text-muted">Bendahara Belum Komfirmasi</span>
                                 @endif
                             </td>
                         </tr>
@@ -70,10 +74,10 @@
             <tbody>
                 @foreach ($KonfirmasiSetoranPetugas as $index => $konfirmasi)
                     <tr>
-                        <td>{{ $konfirmasiSetorans->firstItem() + $index }}</td>
+                        <td>{{ $KonfirmasiSetoranPetugas->firstItem() + $index }}</td>
                         <td>Rp {{ number_format($konfirmasi->setoran->total_amount, 0, ',', '.') }}</td>
                         {{-- <td>{{ $konfirmasi->setoran->total_amount }}</td> <!-- Menampilkan Jumlah Setoran --> --}}
-                        <td>{{ $konfirmasi->setoran->petugas->name ?? 'Tidak Diketahui' }}</td>
+                        <td>{{ $konfirmasi->setoran->collector->name ?? 'Tidak Diketahui' }}</td>
                         <!-- Menampilkan Nama Petugas -->
                         <td>{{ $konfirmasi->bendahara->name }}</td> <!-- Menampilkan Nama Bendahara -->
 

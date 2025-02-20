@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('pengeluaran_rts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('rt_id')->constrained()->onDelete('cascade'); // RT yang mengeluarkan uang
+            $table->date('date'); // Tanggal pengeluaran
+
             $table->decimal('amount', 15, 2); // Jumlah uang yang dikeluarkan
             $table->string('description'); // Keterangan penggunaan dana
             $table->foreignId('approved_by')->constrained('users')->onDelete('cascade'); // Bendahara yang menyetujui

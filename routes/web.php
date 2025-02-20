@@ -89,10 +89,10 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('pembayaran', PembayaranController::class);
         Route::get('belum-dibayar/{house_id}', [PembayaranController::class, 'getIuranBelumDibayar'])->name('pembayaran.getIuranBelumDibayar');
         Route::resource('setoran', SetoranPetugasController::class);
-        Route::get('confirm-setoran-petugas', [KonfirmasiSetoranPetugasController::class, 'confirmSetoran']);
-        // put
-        Route::put('/confirm-setoran-petugas/{setoran}/konfirmasi', [KonfirmasiSetoranPetugasController::class, 'konfirmasi'])->name('confirm.setoran.petugas');
-        // Route::resource('setoran-petugas', SetoranPetugasController::class);
+        Route::resource('setoran-petugas', SetoranPetugasController::class);
+        Route::get('confirm-setoran-petugas', [KonfirmasiSetoranPetugasController::class, 'confirmSetoran'])->name('confirm.setoran.petugas');
+        Route::put('/confirm-setoran-petugas/{setoran}/konfirmasi', [KonfirmasiSetoranPetugasController::class, 'konfirmasi']);
+
         Route::resource('pengeluaran-rt', PengeluaranRtController::class);
         Route::resource('jenis-iuran', JenisIuranController::class);
         // Route::resource('house-user', HouseUserController::class);
@@ -100,6 +100,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('house-user', [HouseUserController::class, 'index'])->name('house-user.index');
         Route::get('house-user/link', [HouseUserController::class, 'linkUserToHouse'])->name('house-user.link');
         Route::post('house-user/link', [HouseUserController::class, 'storeLink'])->name('house-user.storeLink');
+        // saldort
+        Route::get('saldo', [SaldoController::class, 'index'])->name('saldo.index');
     });
 });
 // middleware('auth')

@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('saldo_logs', function (Blueprint $table) {
+        Schema::create('saldo_rt_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('rt_id')->constrained()->onDelete('cascade'); // RT terkait
             $table->decimal('amount', 15, 2); // Nominal perubahan saldo
-            $table->enum('type', ['income', 'expense'])->default('income'); // income = pemasukan, expense = pengeluaran
+            $table->enum('type', ['pemasukan', 'pengeluaran']); // income = pemasukan, expense = pengeluaran
             $table->string('description'); // Keterangan transaksi
             $table->foreignId('reference_id')->nullable(); // ID referensi (misal pembayaran atau pengeluaran)
             $table->string('reference_type')->nullable(); // Jenis referensi (pembayaran, setoran, pengeluaran)
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('saldo_logs');
+        Schema::dropIfExists('saldo_rt_logs');
     }
 };

@@ -11,6 +11,7 @@ class KonfirmasiSetoranPetugas extends Model
 
     // Tentukan kolom yang bisa diisi
     protected $fillable = [
+        'rt_id',           // ID RT
         'setoran_id',      // ID Setoran Petugas
         'bendahara_id',    // ID Bendahara yang mengkonfirmasi
         'status',          // Status konfirmasi
@@ -31,5 +32,12 @@ class KonfirmasiSetoranPetugas extends Model
     public function bendahara()
     {
         return $this->belongsTo(User::class, 'bendahara_id');
+    }
+    /**
+     * Relasi dengan tabel RT.
+     */
+    public function rt()
+    {
+        return $this->belongsTo(Rt::class, 'rt_id');
     }
 }
