@@ -53,7 +53,7 @@ class KonfirmasiSetoranPetugasController extends Controller
             'notes' => $request->notes ?? 'Setoran dikonfirmasi.'
         ]);
 
-        return redirect()->route('manage-rt.konfirmasi-setoran.index')
+        return redirect()->route('manage-rt.bendahara.konfirmasi-setoran.index')
             ->with('success', 'Setoran berhasil dikonfirmasi.');
     }
 
@@ -71,7 +71,7 @@ class KonfirmasiSetoranPetugasController extends Controller
             'notes' => $request->notes
         ]);
 
-        return redirect()->route('manage-rt.konfirmasi-setoran.index')
+        return redirect()->route('manage-rt.bendahara.konfirmasi-setoran.index')
             ->with('success', 'Setoran berhasil ditolak.');
     }
 

@@ -290,6 +290,13 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link {{ request()->is('manage-rt/pembayaran-global') ? 'active' : '' }}"
+                                    href="/manage-rt/pembayaran-global">
+                                    <i class="fas fa-credit-card"></i>
+                                    <span>Pembayaran Global</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link {{ request()->is('manage-rt/setoran-petugas') ? 'active' : '' }}"
                                     href="/manage-rt/setoran-petugas">
                                     <i class="fas fa-hand-holding-usd"></i>
@@ -297,8 +304,8 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link {{ request()->is('manage-rt/konfirmasi-setoran') ? 'active' : '' }}"
-                                    href="/manage-rt/konfirmasi-setoran">
+                                <a class="nav-link {{ request()->is('manage-rt/bendahara/konfirmasi-setoran') ? 'active' : '' }}"
+                                    href="/manage-rt/bendahara/konfirmasi-setoran">
                                     <i class="fas fa-user-check"></i>
                                     <span>Data Setoran Petugas</span>
                                 </a>

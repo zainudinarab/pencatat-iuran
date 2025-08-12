@@ -213,7 +213,7 @@
                 let name = this.dataset.name;
                 document.getElementById('confirmName').textContent = name;
 
-                document.getElementById('confirmForm').action = `/manage-rt/konfirmasi-setoran/${id}`;
+                document.getElementById('confirmForm').action = `/manage-rt/bendahara/konfirmasi-setoran/${id}`;
                 new bootstrap.Modal(document.getElementById('confirmModal')).show();
             });
         });
@@ -223,7 +223,7 @@
                 let id = this.dataset.id;
                 let name = this.dataset.name;
                 document.getElementById('rejectName').textContent = name;
-                document.getElementById('rejectForm').action = `/manage-rt/batalkan-konfirmasi/${id}`;
+                document.getElementById('rejectForm').action = `/manage-rt/bendahara/batalkan-konfirmasi/${id}`;
                 new bootstrap.Modal(document.getElementById('rejectModal')).show();
             });
         });

@@ -11,7 +11,7 @@ use App\Traits\HasActivityLog;
 
 class House extends Model
 {
-    use HasRtGangFilter, AutoAssignRtGangUser, HasActivityLog, HasFactory;
+    use HasRtGangFilter, HasActivityLog, HasFactory;
 
     protected $primaryKey = 'id'; // ID gabungan blok dan nomer
     public $incrementing = false; // Menggunakan primary key yang bukan auto increment

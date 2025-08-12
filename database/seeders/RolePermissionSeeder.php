@@ -44,6 +44,8 @@ class RolePermissionSeeder extends Seeder
             $permissions[] = "$table-delete";
         }
         // Tambahan khusus
+        
+        $permissions[] = 'pembayaran-global';
         $permissions[] = 'setoran_petugas-reject';
         $permissions[] = 'setoran_petugas-confirm';
         // Buat semua permissions
@@ -72,16 +74,33 @@ class RolePermissionSeeder extends Seeder
         Role::findByName('ketua_rt')->syncPermissions([
             'rts-view',
             'rts-edit',
+            'setoran_petugas-create',
+            'setoran_petugas-view',
+            'setoran_petugas-delete',
+            'setoran_petugas-edit',
+            'pembayarans-view',
+            'pembayarans-create',
+            'pembayarans-edit',
+             'pembayarans-delete',
+            'pembayaran-global',
             'activity_logs-view',
             'saldo_rts-view',
             'pengeluaran_rts-view'
+            
         ]);
 
         Role::findByName('bendahara_rt')->syncPermissions([
             'iuran_wajibs-view',
             'iuran_wajibs-edit',
             'pembayarans-view',
+            'pembayarans-create',
             'pembayarans-edit',
+             'pembayarans-delete',
+            'pembayaran-global',
+            'setoran_petugas-create',
+            'setoran_petugas-view',
+            'setoran_petugas-delete',
+            'setoran_petugas-edit',
             'saldo_rts-view',
             'pengeluaran_rts-view',
             'pengeluaran_rts-create',

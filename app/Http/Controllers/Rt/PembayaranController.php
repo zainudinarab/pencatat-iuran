@@ -15,6 +15,22 @@ use Illuminate\Support\Facades\Auth;
 class PembayaranController extends Controller
 {
     public function index()
+{
+    $user = Auth::user();
+    $this->authorize('viewAny', Pembayaran::class);
+
+    $query = Pembayaran::with(['house', 'collector', 'setoran', 'detailPembayaran.iuranWajib']);
+
+    // Jika user memiliki role ketua_rt atau bendahara_rt, filter berdasarkan id mereka
+    if ($user->hasAnyRole(['ketua_rt', 'bendahara_rt'])) {
+        $query->where('collector_id', $user->id);
+    }
+
+    $pembayaran = $query->paginate(10);
+    
+    return view('rt.manage_pembayaran.index', compact('pembayaran'));
+}
+     public function pembayaranGlobal()
     {
         $this->authorize('viewAny', Pembayaran::class);
 

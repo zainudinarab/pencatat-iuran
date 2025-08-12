@@ -16,6 +16,7 @@ class Pembayaran extends Model
     protected $fillable = [
         'house_id',
         'rt_id',
+        'gang_id',
         'total_amount',
         'payment_method',
         'status',

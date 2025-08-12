@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('house_id');
             $table->foreignId('rt_id')->constrained('rts')->onDelete('cascade');
+            $table->foreignId('gang_id')->nullable()->constrained('gangs')->onDelete('set null');
             $table->decimal('total_amount', 12, 2);
             $table->enum('payment_method', ['manual', 'midtrans', 'xendit']);
             $table->enum('status', ['confirmed', 'failed'])->default('confirmed'); // Langsung confirmed jika bayar ke ketua gang

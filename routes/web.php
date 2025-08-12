@@ -68,6 +68,7 @@ Route::middleware(['auth'])->group(function () {
 
             // Pembayaran
             Route::resource('pembayaran', PembayaranController::class);
+            Route::get('pembayaran-global', [PembayaranController::class, 'pembayaranGlobal'])->name('pembayaran.global');
             Route::get('belum-dibayar/{house_id}', [PembayaranController::class, 'getIuranBelumDibayar'])
                 ->name('pembayaran.belum-dibayar');
 
@@ -97,14 +98,16 @@ Route::middleware(['auth'])->group(function () {
         ->group(function () {
             Route::get('laporan-keuangan', [LaporanController::class, 'laporanKeuangan'])->name('laporan.keuangan');
             Route::get('pengaturan-iuran', [IuranWajibController::class, 'atur'])->name('iuran.atur');
+            
+             
         });
 
     // ===================================
     // 🔐 Khusus: Bendahara RT
     // ===================================
     Route::middleware('role:bendahara_rt')
-        ->prefix('manage-rt/bendahara-rt')
-        ->name('manage-rt.bendahara-rt.')
+        ->prefix('manage-rt/bendahara')
+        ->name('manage-rt.bendahara.')
         ->group(function () {
             Route::get('konfirmasi-setoran', [KonfirmasiSetoranPetugasController::class, 'index'])->name('konfirmasi-setoran.index');
             Route::post('konfirmasi-setoran/{id}', [KonfirmasiSetoranPetugasController::class, 'konfirmasi'])->name('konfirmasi-setoran.konfirmasi');
