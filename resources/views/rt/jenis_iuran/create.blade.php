@@ -11,7 +11,14 @@
                 <input type="text" class="form-control" id="name" name="name" required>
             </div>
 
+            <div class="mb-3">
+                <label for="amount" class="form-label">Jumlah Iuran (Rp)</label>
+                <input type="number" class="form-control" id="amount" name="amount" step="0.01" min="0"
+                    required>
+            </div>
+
             <button type="submit" class="btn btn-primary">Simpan</button>
         </form>
+
     </div>
 @endsection

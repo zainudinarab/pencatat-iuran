@@ -4,10 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasRtGangFilter;
+use App\Traits\AutoAssignRtGangUser;
+use App\Traits\HasActivityLog;
+
 
 class Pembayaran extends Model
 {
-    use HasFactory;
+    use HasRtGangFilter, AutoAssignRtGangUser, HasActivityLog, HasFactory;
 
     protected $fillable = [
         'house_id',
@@ -28,10 +32,10 @@ class Pembayaran extends Model
     {
         return $this->belongsTo(House::class, 'house_id', 'id');
     }
-    public function pembayarans()
-    {
-        return $this->hasMany(Pembayaran::class, 'house_id', 'id');
-    }
+    // public function pembayarans()
+    // {
+    //     return $this->hasMany(Pembayaran::class, 'house_id', 'id');
+    // }
 
     /**
      * Relasi antara Pembayaran dan Collector

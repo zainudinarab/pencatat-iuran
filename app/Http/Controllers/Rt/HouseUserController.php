@@ -13,6 +13,7 @@ class HouseUserController extends Controller
     // Method lainnya untuk CRUD rumah sudah ada, kita menambahkannya di sini
     public function index()
     {
+        dd("ss");
         // Mengambil data HouseUser dengan relasi user dan house
         // Menggunakan paginate untuk membatasi jumlah data yang ditampilkan
         // Anda dapat mengubah 10 menjadi jumlah yang Anda inginkan

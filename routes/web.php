@@ -11,9 +11,9 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
-// RoleController
 use App\Http\Controllers\RoleController;
-// manage RT
+
+// RT Controllers
 use App\Http\Controllers\Rt\RtController;
 use App\Http\Controllers\Rt\GangController;
 use App\Http\Controllers\Rt\HouseController;
@@ -25,87 +25,141 @@ use App\Http\Controllers\Rt\HouseUserController;
 use App\Http\Controllers\Rt\JenisIuranController;
 use App\Http\Controllers\Rt\KonfirmasiSetoranPetugasController;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-Route::get('/', [ResidentController::class, 'totaAamount']);
+// Authentication Routes
+Auth::routes(['register' => true]);
+
+// Public Routes
+Route::get('/', [ResidentController::class, 'totalAmount'])->name('home.total');
 Route::get('/detail/{resident}', [ResidentController::class, 'detail'])->name('residents.detail');
-// show
 
-
-
-
-// Auth::routes();
-Auth::routes([
-    'register' => true
-]);
-
-
-// Route::middleware(['auth', 'role:petugas,bendahara'])->group(function () {
-//     Route::get('/dashboard', function () {
-//         return view('dashboard');
-//     })->name('dashboard');
-// });
-
-// Route untuk logout
-
-// Route yang memerlukan autentikasi
-Route::middleware('auth')->group(function () {
-    // Dashboard
+// Authenticated Routes
+Route::middleware(['auth'])->group(function () {
     Route::get('/home', function () {
         return view('home');
     })->name('home');
 
-
-    // Menampilkan halaman profil
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    // Profile Routes
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::post('/profile/update-name', [ProfileController::class, 'updateName'])->name('profile.updateName');
     Route::post('/profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
-});
-// role Admin dan Bendahara
-Route::middleware(['auth'])->group(function () {
-    Route::resource('setoran', SetoranController::class);
-    Route::resource('residents', ResidentController::class);
-    Route::resource('penarikan', PenarikanController::class);
-    Route::resource('setoran', SetoranController::class);
-    Route::resource('pengeluaran', PengeluaranController::class);
-    Route::get('/penarikan-by-residents', [PenarikanController::class, 'getresidents'])->name('penarikan.getresidents');
-    Route::get('confirm-setoran', [KonfirmasiSetoranController::class, 'confirmSetoran'])->name('confirm.setoran');
-    Route::put('/setoran/{setoran}/konfirmasi', [KonfirmasiSetoranController::class, 'konfirmasi'])->name('setoran.konfirmasi');
+
+    // =============================
+    // 🔐 WARGA (Resident) Routes
+    // =============================
+    Route::middleware('role:warga')->prefix('warga')->name('warga.')->group(function () {
+        // Contoh: dashboard warga, pembayaran, dll
+        // Route::get('/dashboard', [WargaController::class, 'index'])->name('dashboard');
+    });
+
+    // =============================
+    // 🔐 SHARED: Admin + RT Roles
+    // =============================
+    Route::middleware('role:admin|ketua_rt|bendahara_rt|petugas_rt')
+        ->prefix('manage-rt')
+        ->name('manage-rt.')
+        ->group(function () {
+
+            // CRUD Data Dasar
+            Route::resource('rts', RtController::class);
+            Route::resource('gangs', GangController::class);
+            Route::resource('houses', HouseController::class);
+            Route::resource('jenis-iuran', JenisIuranController::class);
+            Route::resource('iuran-wajib', IuranWajibController::class);
+
+            // Pembayaran
+            Route::resource('pembayaran', PembayaranController::class);
+            Route::get('belum-dibayar/{house_id}', [PembayaranController::class, 'getIuranBelumDibayar'])
+                ->name('pembayaran.belum-dibayar');
+
+
+            // Setoran Petugas
+            Route::resource('setoran-petugas', SetoranPetugasController::class);
+            Route::get('confirm-setoran-petugas', [KonfirmasiSetoranPetugasController::class, 'confirmSetoran'])
+                ->name('confirm.setoran.petugas');
+            Route::put('setoran-petugas/{setoran}/konfirmasi', [KonfirmasiSetoranPetugasController::class, 'konfirmasi'])
+                ->name('setoran-petugas.konfirmasi');
+
+            // Pengeluaran RT
+            Route::resource('pengeluaran-rt', PengeluaranRtController::class);
+
+            // Link User to House
+            Route::get('house-user', [HouseUserController::class, 'index'])->name('house-user.index');
+            Route::get('house-user/link', [HouseUserController::class, 'linkUserToHouse'])->name('house-user.link');
+            Route::post('house-user/link', [HouseUserController::class, 'storeLink'])->name('house-user.storeLink');
+        });
+
+    // ===================================
+    // 🔐 Khusus: Ketua RT & Bendahara RT
+    // ===================================
+    Route::middleware('role:ketua_rt|bendahara_rt')
+        ->prefix('manage-rt')
+        ->name('manage-rt.shared.')
+        ->group(function () {
+            Route::get('laporan-keuangan', [LaporanController::class, 'laporanKeuangan'])->name('laporan.keuangan');
+            Route::get('pengaturan-iuran', [IuranWajibController::class, 'atur'])->name('iuran.atur');
+        });
+
+    // ===================================
+    // 🔐 Khusus: Bendahara RT
+    // ===================================
+    Route::middleware('role:bendahara_rt')
+        ->prefix('manage-rt/bendahara-rt')
+        ->name('manage-rt.bendahara-rt.')
+        ->group(function () {
+            Route::get('konfirmasi-setoran', [KonfirmasiSetoranPetugasController::class, 'index'])->name('konfirmasi-setoran.index');
+            Route::post('konfirmasi-setoran/{id}', [KonfirmasiSetoranPetugasController::class, 'konfirmasi'])->name('konfirmasi-setoran.konfirmasi');
+            Route::post('batalkan-konfirmasi/{id}', [KonfirmasiSetoranPetugasController::class, 'batalkanKonfirmasi'])->name('konfirmasi-setoran.batal');
+        });
+
+    // ===================================
+    // 🔐 Khusus: Ketua RT
+    // ===================================
+    Route::middleware('role:ketua_rt')
+        ->prefix('manage-rt/ketua-rt')
+        ->name('manage-rt.ketua-rt.')
+        ->group(function () {
+            // Tambahkan route khusus ketua RT di sini
+            // Contoh: approve laporan, cetak rekap, dll
+        });
+
+    // ===================================
+    // 🔐 Khusus: Petugas RT
+    // ===================================
+    Route::middleware('role:petugas_rt')
+        ->prefix('manage-rt/petugas-rt')
+        ->name('manage-rt.petugas-rt.')
+        ->group(function () {
+            // Tambahkan route khusus petugas RT
+            // Contoh: input setoran harian, lihat target, dll
+        });
+
+    // ===================================
+    // 🏦 Umum: Keuangan & Laporan
+    // ===================================
     Route::get('/saldo', [SaldoController::class, 'index'])->name('saldo.index');
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/tarikan-by-petugas', [LaporanController::class, 'tarikabypetugas'])->name('laporan.tarikabypetugas');
-    Route::resource('penarikan', PenarikanController::class);
-    Route::get('download-penarikan-excel', [PenarikanController::class, 'downloadExcel']);
-    Route::get('download-penarikan-pdf', [PenarikanController::class, 'downloadPDF']);
-    Route::get('/detail-penarikan', [PenarikanController::class, 'tarikan'])->name('penarikan.tarikan');
-    // manage RT
-    Route::prefix('manage-rt')->name('manage-rt.')->group(function () {
-        // Route untuk RT
-        Route::resource('rts', RtController::class);
-        Route::resource('gangs', GangController::class);
-        Route::resource('houses', HouseController::class);
-        Route::resource('iuran-wajib', IuranWajibController::class);
-        Route::resource('pembayaran', PembayaranController::class);
-        Route::get('belum-dibayar/{house_id}', [PembayaranController::class, 'getIuranBelumDibayar'])->name('pembayaran.getIuranBelumDibayar');
-        Route::resource('setoran', SetoranPetugasController::class);
-        Route::resource('setoran-petugas', SetoranPetugasController::class);
-        Route::get('confirm-setoran-petugas', [KonfirmasiSetoranPetugasController::class, 'confirmSetoran'])->name('confirm.setoran.petugas');
-        Route::put('/confirm-setoran-petugas/{setoran}/konfirmasi', [KonfirmasiSetoranPetugasController::class, 'konfirmasi']);
 
-        Route::resource('pengeluaran-rt', PengeluaranRtController::class);
-        Route::resource('jenis-iuran', JenisIuranController::class);
-        // Route::resource('house-user', HouseUserController::class);
-        // index
-        Route::get('house-user', [HouseUserController::class, 'index'])->name('house-user.index');
-        Route::get('house-user/link', [HouseUserController::class, 'linkUserToHouse'])->name('house-user.link');
-        Route::post('house-user/link', [HouseUserController::class, 'storeLink'])->name('house-user.storeLink');
-        // saldort
-        Route::get('saldo', [SaldoController::class, 'index'])->name('saldo.index');
-    });
+    // Penarikan
+    Route::resource('penarikan', PenarikanController::class);
+    Route::get('penarikan-by-residents', [PenarikanController::class, 'getresidents'])->name('penarikan.getresidents');
+    Route::get('detail-penarikan', [PenarikanController::class, 'tarikan'])->name('penarikan.tarikan');
+    Route::get('download-penarikan-excel', [PenarikanController::class, 'downloadExcel'])->name('penarikan.download.excel');
+    Route::get('download-penarikan-pdf', [PenarikanController::class, 'downloadPDF'])->name('penarikan.download.pdf');
+
+    // Setoran
+    Route::resource('setoran', SetoranController::class);
+    Route::get('confirm-setoran', [KonfirmasiSetoranController::class, 'confirmSetoran'])->name('setoran.confirm');
+    Route::put('/setoran/{setoran}/konfirmasi', [KonfirmasiSetoranController::class, 'konfirmasi'])->name('setoran.konfirmasi');
+
+    // Pengeluaran
+    Route::resource('pengeluaran', PengeluaranController::class);
 });
-// middleware('auth')
-Route::middleware(['auth', 'role:Admin'])->group(function () {
+
+// ===================================
+// 🔐 Admin Only Routes
+// ===================================
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);

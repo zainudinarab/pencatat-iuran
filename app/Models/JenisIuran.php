@@ -10,7 +10,7 @@ class JenisIuran extends Model
     use HasFactory;
 
     protected $table = 'jenis_iurans';
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'amount'];
 
     // Relasi ke tabel iuran_wajib
     public function iuranWajibs()

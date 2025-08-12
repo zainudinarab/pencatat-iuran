@@ -23,13 +23,18 @@ class JenisIuranController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:jenis_iurans,name',
+            'amount' => 'required|numeric|min:0', // Validasi tambahan
         ]);
 
-        JenisIuran::create($request->all());
+        JenisIuran::create([
+            'name' => $request->name,
+            'amount' => $request->amount,
+        ]);
 
         return redirect()->route('manage-rt.jenis-iuran.index')
             ->with('success', 'Jenis Iuran berhasil ditambahkan.');
     }
+
 
     public function edit(JenisIuran $jenisIuran)
     {

@@ -17,26 +17,24 @@ class IuranSeed extends Seeder
      */
     public function run(): void
     {
-
         // Create 'Iuran Wajib' in jenis_iurans table
         $jenisIuran = JenisIuran::create([
-            'name' => 'Iuran Wajib'
+            'name' => 'Iuran Wajib',
+            'amount' => 30000.00
         ]);
 
-        // Assuming RT 11 already exists, if not, you can create it here as well
-        $rt = RT::where('name', 'RT 11')->first(); // Replace with your RT retrieval logic if necessary
+        // Ensure RT 11 exists
+        $rt = RT::firstOrCreate(['name' => 'RT 11']);
 
         // Loop through months January 2025 to December 2025
         for ($month = 1; $month <= 12; $month++) {
-            // Format the month as YYYYMM
-            $billMonth = 202500 + $month;
+            $billMonth = (int)('2025' . str_pad($month, 2, '0', STR_PAD_LEFT));
 
-            // Insert the iuran wajib record for each month
             IuranWajib::create([
                 'rt_id' => $rt->id,
                 'jenis_iuran_id' => $jenisIuran->id,
                 'bill_month' => $billMonth,  // Format YYYYMM
-                'amount' => 30000.00, // Set the iuran amount here (e.g., 100000.00)
+                'amount' => $jenisIuran->amount,
             ]);
         }
     }

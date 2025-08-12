@@ -1,5 +1,5 @@
 {{-- resources/views/confirm_setoran.blade.php --}}
-@extends('layouts.app')
+@extends('layouts.rt')
 
 @section('content')
     <div class="container">
@@ -9,6 +9,7 @@
                 {{ session('error') }}
             </div>
         @endif
+
         {{-- Check if there are any pending setoran --}}
         @if ($SetoranPetugas->isEmpty())
             <div class="alert alert-info">Tidak ada setoran yang perlu dikonfirmasi.</div>
@@ -26,6 +27,7 @@
                 </thead>
                 <tbody>
                     {{-- @dd($setorans) --}}
+
                     @foreach ($SetoranPetugas as $setoran)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
@@ -37,6 +39,7 @@
 
                             </td>
                             <td>
+
                                 {{-- If status is 'pending',isBendahara=TRUE allow confirmation --}}
                                 @if ($setoran->status == 'pending' && $isBendahara)
                                     {{-- @can('konfirmasi_setorans-create') --}}

@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Traits\HasRtGangFilter;
+use App\Traits\HasActivityLog;
 
 class Gang extends Model
 {
-    use HasFactory;
+    use HasRtGangFilter, HasActivityLog, HasFactory;
 
     protected $fillable = [
         'rt_id',
@@ -20,6 +21,7 @@ class Gang extends Model
     {
         return $this->belongsTo(Rt::class);
     }
+
 
     public function ketuaGang()
     {

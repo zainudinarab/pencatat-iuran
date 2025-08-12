@@ -17,9 +17,14 @@ class SetoranPetugasController extends Controller
 {
     public function index()
     {
-        $setoran = SetoranPetugas::with('collector', 'rt', 'approvedBy')->paginate(10);
+        $userId = Auth::id();
+        $setoran = SetoranPetugas::with('collector', 'rt', 'approvedBy')
+            ->where('collector_id', $userId)
+            ->paginate(10);
+
         return view('rt.manage_setoran.index', compact('setoran'));
     }
+
 
     public function create()
     {
@@ -42,14 +47,14 @@ class SetoranPetugasController extends Controller
         // dd($request->all());
         $request->validate([
             'collector_id' => 'required|exists:users,id',
-            'rt_id' => 'required|exists:rts,id',
+            // 'rt_id' => 'required|exists:rts,id',
             'pembayaran_ids' => 'required|array',
             'total_amount' => 'required|numeric',
         ]);
 
         $setoran = SetoranPetugas::create([
             'collector_id' => $request->collector_id,
-            'rt_id' => $request->rt_id,
+            // 'rt_id' => $request->rt_id,
             'total_amount' => $request->total_amount,
             'status' => 'pending', // Status setoran baru adalah 'pending'
             'approved_by' => null, // Belum disetujui
@@ -59,37 +64,93 @@ class SetoranPetugasController extends Controller
             ->update(['setoran_id' => $setoran->id]);
 
 
-        return redirect()->route('manage-rt.setoran.index')->with('success', 'Setoran petugas berhasil ditambahkan');
+        return redirect()->route('manage-rt.setoran-petugas.index')->with('success', 'Setoran petugas berhasil ditambahkan');
     }
 
     public function edit($id)
     {
         $setoran = SetoranPetugas::findOrFail($id);
-        $users = User::all();
-        $rts = Rt::all();
-        return view('rt.manage_setoran.form', compact('setoran', 'users', 'rts'));
+
+        // Ambil semua pembayaran collector yg masih milik dia atau yang sudah dipilih sebelumnya
+        $pembayarans = Pembayaran::where(function ($query) use ($setoran) {
+            $query->whereNull('setoran_id')
+                ->orWhere('setoran_id', $setoran->id);
+        })->where('collector_id', $setoran->collector_id)
+            ->with('collector', 'house')
+            ->get();
+
+        $selectedPembayaranIds = $setoran->pembayarans()->pluck('id')->toArray();
+
+        return view('rt.manage_setoran.edit', compact('setoran', 'pembayarans', 'selectedPembayaranIds'));
     }
+
+
 
     public function update(Request $request, $id)
     {
         $setoran = SetoranPetugas::findOrFail($id);
 
+        $this->authorize('update', $setoran);
+
         $request->validate([
             'collector_id' => 'required|exists:users,id',
-            'rt_id' => 'required|exists:rts,id',
+            // 'rt_id' => 'required|exists:rts,id',
+            'tanggal_setoran' => 'required|date',
+            'pembayaran_ids' => 'required|array',
             'total_amount' => 'required|numeric',
-            'status' => 'required|in:pending,confirmed',
-            'approved_by' => 'nullable|exists:users,id',
         ]);
 
-        $setoran->update($request->all());
+        // Ambil semua pembayaran yang sebelumnya terhubung ke setoran ini
+        $pembayaranSebelumnya = Pembayaran::where('setoran_id', $setoran->id)->pluck('id')->toArray();
 
-        return redirect()->route('manage-rt.setoran.index')->with('success', 'Setoran petugas berhasil diperbarui');
+        // Ambil yang sekarang dikirim dari form
+        $pembayaranBaru = $request->pembayaran_ids;
+
+        // Hitung yang dihapus (tidak dicentang lagi)
+        $toUnlink = array_diff($pembayaranSebelumnya, $pembayaranBaru);
+
+        // Hitung yang ditambahkan (baru dicentang)
+        $toLink = array_diff($pembayaranBaru, $pembayaranSebelumnya);
+
+        // Unlink pembayaran yang di-uncheck
+        if (!empty($toUnlink)) {
+            Pembayaran::whereIn('id', $toUnlink)->update(['setoran_id' => null]);
+        }
+
+        // Link pembayaran baru
+        if (!empty($toLink)) {
+            Pembayaran::whereIn('id', $toLink)->update(['setoran_id' => $setoran->id]);
+        }
+
+        // Update data setoran
+        $setoran->update([
+            'collector_id'     => $request->collector_id,
+            // 'rt_id'            => $request->rt_id,
+            'tanggal_setoran'  => $request->tanggal_setoran,
+            'total_amount'     => $request->total_amount,
+            'status'           => 'pending',
+            'approved_by'      => null,
+        ]);
+
+        return redirect()->route('manage-rt.setoran-petugas.index')->with('success', 'Setoran berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
-        SetoranPetugas::destroy($id);
-        return redirect()->route('manage-rt.setoran.index')->with('success', 'Setoran petugas berhasil dihapus');
+        $setoran = SetoranPetugas::findOrFail($id);
+
+        $this->authorize('delete', $setoran); // <- tambahkan ini
+
+        $setoran->delete();
+
+        return redirect()->route('manage-rt.setoran-petugas.index')->with('success', 'Setoran petugas berhasil dihapus');
     }
+
+
+    // public function destroy($id)
+    // {
+    //     SetoranPetugas::destroy($id);
+    //     $this->authorize('delete', $setoran); // <- tambahkan ini
+    //     return redirect()->route('manage-rt.setoran.index')->with('success', 'Setoran petugas berhasil dihapus');
+    // }
 }

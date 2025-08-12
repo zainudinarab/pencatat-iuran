@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('jenis_iurans', function (Blueprint $table) {
-
             $table->id();
-            $table->string('name')->unique(); // Nama iuran (contoh: "Iuran Keamanan")
+            $table->string('name')->unique();           // Nama iuran (contoh: "Iuran Keamanan")
+            $table->decimal('amount', 12, 2)->default(0); // Jumlah default iuran
             $table->timestamps();
         });
     }

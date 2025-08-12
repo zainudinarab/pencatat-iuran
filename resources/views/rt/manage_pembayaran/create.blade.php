@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.rt')
 @push('css')
     <style>
         h2 {
@@ -149,8 +149,10 @@
         }
     </style>
 @endpush
+@section('page-title', 'Pembayaran Iuran Bulanan')
+@section('back-url', url()->previous())
 @section('content')
-    <h2>Pembayaran Iuran Bulanan</h2>
+
     <div class="mb-3">
         <label for="member-search" class="form-label">Cari Rumah</label>
         <input type="text" id="houses-search" placeholder="Ketik Nama atau No Rumah" autocomplete="off">
@@ -170,7 +172,7 @@
     <form id="payment-form" method="POST" action="{{ route('manage-rt.pembayaran.store') }}">
         @csrf
         <input type="text" name="collector_id" value="{{ auth()->user()->id }}" hidden>
-        <input type="text" name="rt_id" value="{{ $roleData['rt_id'] }}" hidden>
+        {{-- <input type="text" name="rt_id" value="{{ $roleData['rt_id'] }}" hidden> --}}
         <div class="mb-3">
             <label for="selected-member" class="form-label">Rumah Terpilih</label>
             <input type="text" id="selected-houses" class="form-control" readonly placeholder="Rumah belum dipilih">

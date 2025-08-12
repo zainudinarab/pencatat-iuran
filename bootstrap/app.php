@@ -16,8 +16,14 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
-            'rt_id' => \App\Http\Middleware\SetUserRTMiddleware::class,
         ]);
+        // $middleware->alias([
+        //     'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+        //     'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+        //     'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+        //     'rt_id' => \App\Http\Middleware\SetUserRTMiddleware::class,
+        //     'roleaccess' => \App\Http\Middleware\RoleRtMiddleware::class,
+        // ]);
         $middleware->prepend(SetUserRTMiddleware::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {

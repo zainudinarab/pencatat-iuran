@@ -3,7 +3,7 @@
 @section('content')
     <div class="container">
         <h1>Daftar Permission</h1>
-        <a href="{{ route('permissions.create') }}" class="btn btn-primary">Buat Permission Baru</a>
+        <a href="{{ route('admin.permissions.create') }}" class="btn btn-primary">Buat Permission Baru</a>
         <table class="table mt-3">
             <thead>
                 <tr>
@@ -16,7 +16,7 @@
                     <tr>
                         <td>{{ $permission->name }}</td>
                         <td>
-                            <form action="{{ route('permissions.destroy', $permission->id) }}" method="POST"
+                            <form action="{{ route('admin.permissions.destroy', $permission->id) }}" method="POST"
                                 style="display:inline;">
                                 @csrf
                                 @method('DELETE')

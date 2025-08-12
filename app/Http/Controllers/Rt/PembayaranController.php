@@ -16,6 +16,7 @@ class PembayaranController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewAny', Pembayaran::class);
 
         $pembayaran = Pembayaran::with(['house', 'collector', 'setoran', 'detailPembayaran.iuranWajib'])->paginate(10);
         return view('rt.manage_pembayaran.index', compact('pembayaran'));
@@ -23,37 +24,31 @@ class PembayaranController extends Controller
 
     public function create()
     {
-        $user = User::with('rtKetua', 'rtBendahara', 'gang')->find(Auth::id());
-        $roleData = $user->roleWithRT();
+        $this->authorize('create', Pembayaran::class);
 
-        // dd($roleData);
-        if ($roleData['role'] == 'petugas-rt') {
-            // Jika role adalah 'petugas-rt', tampilkan data berdasarkan rt_id dan gang_id
-            $houses = House::where('rt_id', $roleData['rt_id'])
-                ->where('gang_id', $roleData['gang_id'])
-                ->get();
-        } elseif ($roleData['role'] == 'ketua-rt') {
-            // Jika role adalah 'ketua-rt', tampilkan data hanya berdasarkan rt_id
-            $houses = House::where('rt_id', $roleData['rt_id'])
-                ->get();
-        } else {
-            return redirect()->route('manage-rt.pembayaran.index') // Redirect ke halaman index pembayaran
-                ->with('error', 'Anda tidak Bagian pengurus  RT.');
+        $user = Auth::user();
+
+        if ($user->hasRole('PetugasRt')) {
+            $gang = \App\Models\Gang::where('ketua_gang_id', $user->id)->first();
+            if (!$gang) {
+                return redirect()->back()->with('error', 'Anda belum ditugaskan sebagai ketua gang. Tidak dapat menambahkan pembayaran.');
+            }
         }
 
-        // dd($houses);
-
-
+        $houses = House::all();
         $iuranWajib = IuranWajib::all();
-        return view('rt.manage_pembayaran.create', compact('user', 'roleData', 'houses', 'iuranWajib'));
+
+        return view('rt.manage_pembayaran.create', compact('user', 'houses', 'iuranWajib'));
     }
+
+
 
     public function store(Request $request)
     {
         // dd($request->all());
         $validated = $request->validate([
             'house_id' => 'required|exists:houses,id',
-            'rt_id' => 'required|exists:rts,id',
+            // 'rt_id' => 'required|exists:rts,id',
             'collector_id' => 'required|exists:users,id',
             'iuran_wajib' => 'required|json',  // Validasi bahwa iuran_wajib adalah JSON
             'total_amount' => 'required|numeric',
@@ -63,7 +58,7 @@ class PembayaranController extends Controller
         // Menyimpan pembayaran
         $pembayaran = Pembayaran::create([
             'house_id' => $request->house_id,
-            'rt_id' => $request->rt_id,
+            // 'rt_id' => $request->rt_id,
             'total_amount' => $request->total_amount,
             'payment_method' => $request->payment_method,
             'collector_id' => Auth::user()->id, // Petugas penerima,
@@ -82,28 +77,7 @@ class PembayaranController extends Controller
                 'status' => 'confirmed',
             ]);
         }
-        // $request->validate([
-        //     'house_id' => 'required|exists:houses,id',
-        //     'total_amount' => 'required|numeric',
-        //     'payment_method' => 'required|in:manual,midtrans,xendit',
-        //     'status' => 'required|in:confirmed,failed',
-        //     'collector_id' => 'nullable|exists:users,id',
-        //     'setoran_id' => 'nullable|exists:setoran_petugas,id',
-        //     'payment_source' => 'required|in:resident,collector',
-        // ]);
 
-        // $pembayaran = Pembayaran::create($request->all());
-
-        // // Simpan detail pembayaran berdasarkan iuran wajib
-        // foreach ($request->iuran_wajib as $iuranId) {
-        //     DetailPembayaran::create([
-        //         'pembayaran_id' => $pembayaran->id,
-        //         'house_id' => $request->house_id,
-        //         'iuran_wajib_id' => $iuranId,
-        //         'amount' => $request->total_amount / count($request->iuran_wajib),
-        //         'status' => 'pending'
-        //     ]);
-        // }
 
         return redirect()->route('manage-rt.pembayaran.index')->with('success', 'Pembayaran berhasil ditambahkan');
     }

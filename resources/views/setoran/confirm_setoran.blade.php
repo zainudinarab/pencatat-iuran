@@ -1,5 +1,5 @@
 {{-- resources/views/confirm_setoran.blade.php --}}
-@extends('layouts.app')
+@extends('layouts.rt')
 
 @section('content')
     <div class="container">
@@ -33,13 +33,13 @@
                             <td>
                                 {{-- If status is 'pending', allow confirmation --}}
                                 @if ($setoran->status == 'pending')
-                                @can('konfirmasi_setorans-create')
-                                    <button class="btn btn-success btn-sm" data-bs-toggle="modal"
-                                        data-bs-target="#confirmModal" data-id="{{ $setoran->id }}"
-                                        data-petugas="{{ $setoran->petugas->name }}"
-                                        data-amount="{{ $setoran->total_amount }}">Konfirmasi</button>
-                                @endcan
-                                        @else
+                                    @can('konfirmasi_setorans-create')
+                                        <button class="btn btn-success btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#confirmModal" data-id="{{ $setoran->id }}"
+                                            data-petugas="{{ $setoran->petugas->name }}"
+                                            data-amount="{{ $setoran->total_amount }}">Konfirmasi</button>
+                                    @endcan
+                                @else
                                     <span class="text-muted">Konfirmasi sudah dilakukan</span>
                                 @endif
                             </td>

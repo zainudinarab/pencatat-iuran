@@ -4,10 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasRtGangFilter;
+use App\Traits\AutoAssignRtGangUser;
+use App\Traits\HasActivityLog;
+
 
 class House extends Model
 {
-    use HasFactory;
+    use HasRtGangFilter, AutoAssignRtGangUser, HasActivityLog, HasFactory;
 
     protected $primaryKey = 'id'; // ID gabungan blok dan nomer
     public $incrementing = false; // Menggunakan primary key yang bukan auto increment
@@ -34,4 +38,8 @@ class House extends Model
     {
         return $this->hasMany(Pembayaran::class, 'house_id', 'id');
     }
+    // protected static function booted()
+    // {
+    //     static::addGlobalScope(new FilterByRtGangScope);
+    // }
 }

@@ -50,6 +50,7 @@
             border-radius: 8px;
         }
 
+        /* Card menyesuaikan lebar parent */
         .form-card {
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
             border: none;
@@ -70,13 +71,14 @@
     </style>
 @endpush
 
-@section('page-title', 'Tambah Setoran')
-@section('back-url', route('manage-rt.setoran-petugas.index'))
+@section('page-title', 'Daftar RT')
+@section('back-url', url()->previous())
 @section('content')
 
+    <!-- Card tanpa container, lebar mengikuti kontainer di layouts.rt -->
     <div class="card form-card">
         <div class="card-header">
-            <i class="fas fa-plus-circle me-2"></i>Tambah Setoran Baru
+            <i class="fas fa-edit me-2"></i>Update Setoran RT
         </div>
 
         <div class="card-body">
@@ -89,13 +91,13 @@
                 </div>
             @endif
 
-            <!-- Form Tambah Setoran -->
-            <form action="{{ route('manage-rt.setoran-petugas.store') }}" method="POST">
+            <!-- Form -->
+            <form action="{{ route('manage-rt.setoran-petugas.update', $setoran->id) }}" method="POST">
                 @csrf
+                @method('PUT')
 
-                <!-- Hidden Inputs -->
-                <input type="hidden" name="collector_id" value="{{ $user->id }}">
-                <input type="hidden" name="rt_id" value="{{ $roleData['rt_id'] }}">
+                <input type="hidden" name="collector_id" value="{{ $setoran->collector_id }}">
+                <input type="hidden" name="rt_id" value="{{ $setoran->rt_id }}">
 
                 <!-- Tanggal Setoran -->
                 <div class="mb-4">
@@ -104,20 +106,22 @@
                         Tanggal Setoran
                     </label>
                     <input type="date" id="tanggal_setoran" name="tanggal_setoran" class="form-control form-control-lg"
+                        value="{{ old('tanggal_setoran', \Carbon\Carbon::parse($setoran->tanggal_setoran)->format('Y-m-d')) }}"
                         required>
                 </div>
 
                 <!-- Pilih Penarikan -->
                 <div class="mb-4">
                     <label class="form-label">
-                        <i class="fas fa-list-check text-success me-1"></i>
-                        Pilih Penarikan yang Belum Disetorkan
+                        <i class="fas fa-hand-holding-usd text-success me-1"></i>
+                        Pilih Penarikan yang Disetorkan
                     </label>
                     <div class="checkbox-list">
                         @forelse ($pembayarans as $pembayaran)
                             <div class="checkbox-item">
                                 <input type="checkbox" name="pembayaran_ids[]" value="{{ $pembayaran->id }}"
-                                    data-amount="{{ $pembayaran->total_amount }}">
+                                    data-amount="{{ $pembayaran->total_amount }}"
+                                    {{ in_array($pembayaran->id, $selectedPembayaranIds) ? 'checked' : '' }}>
                                 <div class="ms-2">
                                     <strong>{{ $pembayaran->house_id }}</strong> -
                                     <small class="text-muted">{{ $pembayaran->collector->name }}</small> -
@@ -128,7 +132,7 @@
                             </div>
                         @empty
                             <div class="text-center text-muted py-3">
-                                <i class="fas fa-box-open"></i> Tidak ada penarikan yang tersedia.
+                                <i class="fas fa-box-open"></i> Tidak ada data penarikan tersedia.
                             </div>
                         @endforelse
                     </div>
@@ -139,7 +143,7 @@
                     <div class="alert alert-info text-center border-info" id="total_setoran" style="font-size: 1.1rem;">
                         <!-- Diisi oleh JavaScript -->
                     </div>
-                    <input type="hidden" name="total_amount" id="total_amount" value="">
+                    <input type="hidden" name="total_amount" id="total_amount" value="{{ $setoran->total_amount }}">
                 </div>
 
                 <!-- Tombol Aksi -->
@@ -148,7 +152,7 @@
                         <i class="fas fa-times"></i> Batal
                     </a>
                     <button type="submit" class="btn btn-success px-4">
-                        <i class="fas fa-save"></i> Simpan
+                        <i class="fas fa-save"></i> Update
                     </button>
                 </div>
             </form>
@@ -159,24 +163,12 @@
 
 @push('js')
     <script>
-        // Set tanggal otomatis ke hari ini
-        function getCurrentDate() {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-
         document.addEventListener("DOMContentLoaded", function() {
             const checkboxes = document.querySelectorAll('.checkbox-item input[type="checkbox"]');
             const totalAmountInput = document.getElementById('total_amount');
-            const totalDisplay = document.getElementById('total_setoran');
-            document.getElementById('tanggal_setoran').value = getCurrentDate();
 
             function updateTotalSetoran() {
                 let totalSetoran = 0;
-
                 checkboxes.forEach(checkbox => {
                     if (checkbox.checked) {
                         totalSetoran += parseFloat(checkbox.dataset.amount);
@@ -189,7 +181,7 @@
                     minimumFractionDigits: 0
                 }).format(totalSetoran);
 
-                totalDisplay.textContent = `Total Setoran: ${formattedTotal}`;
+                document.getElementById('total_setoran').textContent = `Total Setoran: ${formattedTotal}`;
                 totalAmountInput.value = Math.floor(totalSetoran);
             }
 
@@ -201,6 +193,6 @@
         });
     </script>
 
-    <!-- Font Awesome untuk ikon -->
+    <!-- Font Awesome (opsional, jika belum ada di layout) -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 @endpush

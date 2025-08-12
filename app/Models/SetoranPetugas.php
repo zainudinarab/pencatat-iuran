@@ -4,17 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\AutoAssignRtGangUser;
 
 class SetoranPetugas extends Model
 {
-    use HasFactory;
+    use AutoAssignRtGangUser, HasFactory;
 
     protected $fillable = [
         'collector_id',
         'rt_id',
         'total_amount',
         'status',
-        'approved_by'
+        'approved_by',
+        'confirmed_at',
+        'notes'
     ];
 
     /**
@@ -39,5 +42,10 @@ class SetoranPetugas extends Model
     public function approvedBy()
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+    // SetoranPetugas.php
+    public function pembayarans()
+    {
+        return $this->hasMany(Pembayaran::class, 'setoran_id');
     }
 }

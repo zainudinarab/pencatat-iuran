@@ -122,9 +122,10 @@
                                     Manage Users
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarUsersDropdown">
-                                    <li><a class="dropdown-item" href="{{ route('users.index') }}">Users</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('roles.index') }}">Manage Roles</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('permissions.index') }}">Manage
+                                    <li><a class="dropdown-item" href="{{ route('admin.users.index') }}">Users</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('admin.roles.index') }}">Manage Roles</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="{{ route('admin.permissions.index') }}">Manage
                                             Permissions</a></li>
                                 </ul>
                             </li>

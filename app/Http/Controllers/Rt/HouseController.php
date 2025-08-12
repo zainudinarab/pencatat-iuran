@@ -6,11 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\House;
 use App\Models\Rt;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HouseController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
+
+
+        // dd($user->hasRole(['Admin', 'bendahara', 'Petugas']));
+
+        // hasil: Collection ['Admin', 'bendahara']
+
         $houses = House::with('rt', 'gang')->paginate(10);
         return view('rt.manage_house.index', compact('houses'));
     }
