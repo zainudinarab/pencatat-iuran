@@ -2,33 +2,41 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PengeluaranRt extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'rt_id',
-        'amount',
-        'description',
-        'approved_by'
+        'transaksi_id',
+        'total',
+        'nomor_nota',
+        'tanggal',
+        'penerima',
+        'deskripsi',
+        'rincian',
+        'dokumen'
     ];
 
-    /**
-     * Relasi PengeluaranRt ke RT
-     */
-    public function rt()
+    protected $casts = [
+        'rincian' => 'array',
+        'tanggal' => 'date'
+    ];
+
+    public function transaksi(): BelongsTo
     {
-        return $this->belongsTo(Rt::class, 'rt_id');
+        return $this->belongsTo(TransaksiRt::class);
     }
 
-    /**
-     * Relasi PengeluaranRt ke Bendahara
-     */
-    public function approvedBy()
+    // Method generate nomor nota (tambahkan ini)
+    public static function generateNomorNota($rtId): string
     {
-        return $this->belongsTo(User::class, 'approved_by');
+        $rtCode = 'RT-' . str_pad($rtId, 2, '0', STR_PAD_LEFT);
+        $date = now()->format('Ymd');
+        $lastNota = static::where('nomor_nota', 'like', "NOTA/{$rtCode}/{$date}%")->latest()->first();
+
+        $sequence = $lastNota ? (int) substr($lastNota->nomor_nota, -3) + 1 : 1;
+
+        return "NOTA/{$rtCode}/{$date}/" . str_pad($sequence, 3, '0', STR_PAD_LEFT);
     }
 }

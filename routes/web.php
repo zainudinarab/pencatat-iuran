@@ -24,6 +24,7 @@ use App\Http\Controllers\Rt\PengeluaranRtController;
 use App\Http\Controllers\Rt\HouseUserController;
 use App\Http\Controllers\Rt\JenisIuranController;
 use App\Http\Controllers\Rt\KonfirmasiSetoranPetugasController;
+use App\Http\Controllers\Rt\TransferPosRtController;
 
 // Authentication Routes
 Auth::routes(['register' => true]);
@@ -98,8 +99,14 @@ Route::middleware(['auth'])->group(function () {
         ->group(function () {
             Route::get('laporan-keuangan', [LaporanController::class, 'laporanKeuangan'])->name('laporan.keuangan');
             Route::get('pengaturan-iuran', [IuranWajibController::class, 'atur'])->name('iuran.atur');
-            
-             
+            Route::get('/transfer-pos', [TransferPosRtController::class, 'index'])->name('transfer-pos.index');
+            Route::post('/transfer-pos', [TransferPosRtController::class, 'store'])->name('transfer-pos.store');
+            Route::post('/transfer-pos/{id}/konfirmasi', [TransferPosRtController::class, 'konfirmasi'])->name('transfer-pos.konfirmasi');
+            Route::post('/transfer-pos/{id}/tolak', [TransferPosRtController::class, 'tolak'])->name('transfer-pos.tolak');
+            Route::get('/pengeluaran', [PengeluaranController::class, 'index'])->name('pengeluaran.index');
+            Route::post('/pengeluaran', [PengeluaranController::class, 'store'])->name('pengeluaran.store');
+            Route::post('/pengeluaran/{id}/approve', [PengeluaranController::class, 'approvePengeluaran'])->name('pengeluaran.approve');
+            Route::get('/pengeluaran/{id}/nota', [PengeluaranController::class, 'showNota'])->name('pengeluaran.nota');
         });
 
     // ===================================

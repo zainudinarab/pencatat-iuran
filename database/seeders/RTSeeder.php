@@ -7,6 +7,7 @@ use App\Models\RT;
 use App\Models\Gang;
 use App\Models\House;
 use App\Models\User;
+use App\Models\SaldoPosRt;
 
 class RTSeeder extends Seeder
 {
@@ -43,6 +44,21 @@ class RTSeeder extends Seeder
             'village' => 'Desa ABC',
             'district' => 'Kecamatan XYZ',
             'city' => 'Kota Jakarta',
+        ]);
+        // Buat saldo pos Ketua RT (default saldo 0)
+        SaldoPosRt::create([
+            'rt_id' => $rt->id,
+            'user_id' => $ketuaRT->id,
+            'pos' => 'ketua_rt',
+            'saldo' => 1000000, // contoh saldo awal
+        ]);
+
+        // Buat saldo pos Bendahara (default saldo 0)
+        SaldoPosRt::create([
+            'rt_id' => $rt->id,
+            'user_id' => $bendaharaRT->id,
+            'pos' => 'bendahara_rt',
+            'saldo' => 500000, // contoh saldo awal
         ]);
 
         // Data gang & ketua gang

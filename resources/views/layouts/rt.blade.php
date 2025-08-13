@@ -311,6 +311,13 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link {{ request()->is('manage-rt/transfer-pos') ? 'active' : '' }}"
+                                    href="/manage-rt/transfer-pos">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                    <span>Trabfer Dana</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link {{ request()->is('manage-rt/pengeluaran-rt') ? 'active' : '' }}"
                                     href="/manage-rt/pengeluaran-rt">
                                     <i class="fas fa-file-invoice-dollar"></i>

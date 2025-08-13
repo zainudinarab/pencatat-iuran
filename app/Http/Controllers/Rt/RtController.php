@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Rt;
 
 use App\Http\Controllers\Controller;
 use App\Models\Rt;
+use App\Models\SaldoPosRt;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -42,6 +43,21 @@ class RtController extends Controller
         ]);
 
         $rt = Rt::create($request->all());
+        // Buat saldo pos ketua RT
+        SaldoPosRt::firstOrCreate([
+            'rt_id' => $rt->id,
+            'pos' => 'ketua_rt',
+        ], [
+            'user_id' => $request->ketua_rt_id
+        ]);
+
+        // Buat saldo pos bendahara
+        SaldoPosRt::firstOrCreate([
+            'rt_id' => $rt->id,
+            'pos' => 'bendahara_rt',
+        ], [
+            'user_id' => $request->bendahara_id
+        ]);
         return redirect()->route('manage-rt.rts.index')->with('success', 'RT berhasil ditambahkan');
     }
     public function edit($id)
@@ -66,6 +82,16 @@ class RtController extends Controller
         ]);
 
         $rt->update($request->all());
+        SaldoPosRt::updateOrCreate(
+            ['rt_id' => $rt->id, 'pos' => 'ketua_rt'],
+            ['user_id' => $request->ketua_rt_id]
+        );
+
+        // Update saldo pos bendahara
+        SaldoPosRt::updateOrCreate(
+            ['rt_id' => $rt->id, 'pos' => 'bendahara_rt'],
+            ['user_id' => $request->bendahara_id]
+        );
 
         return redirect()->route('manage-rt.rts.index')->with('success', 'RT berhasil diperbarui');
     }

@@ -21,6 +21,15 @@ return new class extends Migration
             $table->string('reference_type')->nullable(); // Jenis referensi (pembayaran, setoran, pengeluaran)
             $table->timestamps();
         });
+        // Schema::create('saldo_rt_logs', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->foreignId('saldo_rt_id')->constrained();
+        //     $table->foreignId('transaksi_id')->nullable()->constrained('transaksi_rts');
+        //     $table->decimal('perubahan', 15, 2);
+        //     $table->decimal('saldo_setelah', 15, 2);
+        //     $table->string('keterangan')->nullable();
+        //     $table->timestamps();
+        // });
     }
 
     /**
