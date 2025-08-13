@@ -6,30 +6,42 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('pengeluaran_rts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('transaksi_id')->constrained('transaksi_rts'); // Relasi ke transaksi utama
-            $table->decimal('total', 15, 2); // Total pengeluaran (harus sama dengan transaksi_rts.jumlah)
-            $table->string('nomor_nota')->nullable()->unique(); // Format: NOTA/RT-XX/YYYYMMDD/001
+            $table->foreignId('rt_id')->constrained('rts')->onDelete('cascade');
+            $table->foreignId('user_id')
+                ->nullable()
+                ->constrained('users')
+                ->onDelete('set null');
+             $table->string('nomor_nota')->unique();
+            $table->string('nama_pencatat'); // disimpan statis untuk arsip
+            $table->decimal('total', 15, 2); // Total pengeluaran
             $table->date('tanggal');
-            $table->string('penerima'); // Nama penerima/pihak terkait
-            $table->text('deskripsi'); // Contoh: "Pembelian alat kebersihan"
-            $table->json('rincian')->nullable(); // Format: [{"nama":"Sapu","harga":50000,"qty":2}]
-            $table->string('dokumen')->nullable(); // Path file bukti
+            $table->text('catatan')->nullable();
+            $table->string('bukti_gambar')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('pengeluaran_rt_items', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('pengeluaran_rt_id')
+                ->constrained('pengeluaran_rts')
+                ->onDelete('cascade');
+            $table->string('nama_item');
+            $table->integer('jumlah')->default(1);
+            $table->decimal('harga_satuan', 15, 2)->default(0);
+            $table->decimal('total', 15, 2)->default(0);
+            $table->string('satuan')->nullable(); // contoh: pcs, kg, liter
+            $table->text('catatan')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
+        Schema::dropIfExists('pengeluaran_rt_items');
         Schema::dropIfExists('pengeluaran_rts');
     }
 };

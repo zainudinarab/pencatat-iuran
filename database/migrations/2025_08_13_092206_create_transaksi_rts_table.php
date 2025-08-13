@@ -13,16 +13,14 @@ return new class extends Migration
     {
         Schema::create('transaksi_rts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('rt_id')->constrained();
-            $table->foreignId('setoran_id')->nullable()->constrained('setoran_petugas');
+             $table->foreignId('rt_id')->nullable()->constrained('rts')->onDelete('cascade');
             $table->enum('jenis', ['pemasukan', 'pengeluaran']);
-            $table->decimal('jumlah', 15, 2);
+            $table->string('sumber')->nullable(); // setoran_petugas / pemasukan_lain / pengeluaran_rt
+             $table->unsignedBigInteger('ref_id')->nullable(); // ID di tabel sumber
+            $table->string('ref_tabel')->nullable(); // nama tabel sumber
+            $table->decimal('nominal', 15, 2);
+            $table->decimal('saldo_setelah', 15, 2)->nullable();
             $table->text('keterangan');
-            $table->string('dokumen_bukti')->nullable();
-            $table->foreignId('pembuat_id')->constrained('users');
-            $table->foreignId('penyetuju_id')->nullable()->constrained('users');
-            $table->enum('status', ['draft', 'disetujui', 'ditolak'])->default('draft');
-            $table->timestamp('disetujui_pada')->nullable();
             $table->timestamps();
         });
     }
