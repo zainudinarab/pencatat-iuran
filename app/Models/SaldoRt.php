@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\LogsSaldoRt;
 
 class SaldoRt extends Model
 {
-    use HasFactory;
+    use LogsSaldoRt, HasFactory;
 
     protected $fillable = [
         'rt_id',
@@ -21,12 +22,21 @@ class SaldoRt extends Model
     {
         return $this->belongsTo(Rt::class, 'rt_id');
     }
-
+    public function logs()
+    {
+        return $this->hasMany(SaldoRtLog::class, 'rt_id', 'rt_id');
+    }
     /**
      * Update Saldo RT (menambah atau mengurangi saldo)
      */
-    public function logs()
+
+    // Di model SaldoRt
+    protected $tempReferenceId = null;
+    protected $tempReferenceType = null;
+
+    public function setReference($id, $type)
     {
-        return $this->hasMany(SaldoRtLog::class);
+        $this->tempReferenceId = $id;
+        $this->tempReferenceType = $type;
     }
 }

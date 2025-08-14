@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
+use App\Models\SaldoPosRt;
+use App\Models\TransaksiRt;
+use Illuminate\Support\Facades\DB;
 
 class KonfirmasiSetoranPetugasController extends Controller
 {
@@ -42,21 +45,74 @@ class KonfirmasiSetoranPetugasController extends Controller
 
 
     // 🔹 Konfirmasi
+    // public function konfirmasi(Request $request, $id)
+    // {
+    //     $setoran = SetoranPetugas::where('id', $id)->where('status', 'pending')->firstOrFail();
+    //     $this->authorize('confirm', $setoran);  // cek policy confirm
+    //     $setoran->update([
+    //         'status' => 'confirmed',
+    //         'approved_by' => Auth::id(),
+    //         'confirmed_at' => now(),
+    //         'notes' => $request->notes ?? 'Setoran dikonfirmasi.'
+    //     ]);
+
+    //     return redirect()->route('manage-rt.bendahara.konfirmasi-setoran.index')
+    //         ->with('success', 'Setoran berhasil dikonfirmasi.');
+    // }
     public function konfirmasi(Request $request, $id)
     {
         $setoran = SetoranPetugas::where('id', $id)->where('status', 'pending')->firstOrFail();
-        $this->authorize('confirm', $setoran);  // cek policy confirm
-        $setoran->update([
-            'status' => 'confirmed',
-            'approved_by' => Auth::id(),
-            'confirmed_at' => now(),
-            'notes' => $request->notes ?? 'Setoran dikonfirmasi.'
-        ]);
 
-        return redirect()->route('manage-rt.bendahara.konfirmasi-setoran.index')
-            ->with('success', 'Setoran berhasil dikonfirmasi.');
+        $this->authorize('confirm', $setoran);  // cek policy confirm, pastikan hanya bendahara
+
+        DB::beginTransaction();
+
+        try {
+            // Update status setoran jadi confirmed
+            $setoran->update([
+                'status' => 'confirmed',
+                'approved_by' => Auth::id(),
+                'confirmed_at' => now(),
+                'notes' => $request->notes ?? 'Setoran dikonfirmasi.'
+            ]);
+
+            $rtId = $setoran->rt_id;
+            $nominal = $setoran->total_amount;
+
+            // Update saldo utama RT, tambah saldo
+            $saldoUtama = SaldoRt::firstOrCreate(['rt_id' => $rtId]);
+            $saldoUtama->setReference($id, 'Setoran Petugas');
+            $saldoUtama->total_saldo += $nominal;
+            $saldoUtama->save();
+
+            // Update saldo POS bendahara_rt, tambah saldo
+            $bendaharaUserId = Auth::id(); // User yang approve adalah bendahara
+            $saldoPos = SaldoPosRt::firstOrCreate(
+                ['rt_id' => $rtId, 'pos' => 'bendahara_rt'],
+                ['user_id' => $bendaharaUserId, 'saldo' => 0]
+            );
+            $saldoPos->saldo += $nominal;
+            $saldoPos->save();
+            // Catat transaksi
+            TransaksiRt::create([
+                'rt_id' => $rtId,
+                'jenis' => 'pemasukan',
+                'sumber' => 'setoran_petugas',
+                'ref_id' => $setoran->id,
+                'ref_tabel' => 'setoran_petugas',
+                'nominal' => $nominal,
+                'saldo_setelah' => $saldoUtama->total_saldo,
+                'keterangan' => 'Setoran petugas oleh ' . $setoran->collector->name,
+            ]);
+            DB::commit();
+
+            return redirect()->route('manage-rt.bendahara.konfirmasi-setoran.index')
+                ->with('success', 'Setoran berhasil dikonfirmasi dan saldo berhasil diperbarui.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal mengkonfirmasi setoran: ' . $e->getMessage());
+        }
     }
-
     // 🔹 Tolak
     public function tolak(Request $request, $id)
     {

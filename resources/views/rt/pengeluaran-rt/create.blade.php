@@ -1,51 +1,299 @@
-@extends('layouts.app')
+@extends('layouts.rt')
+
+@section('page-title', 'Tambah Pengeluaran RT')
+@section('back-url', url()->previous())
+
+@push('css')
+    <style>
+        .form-card {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .btn-add {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            color: white;
+        }
+
+        .btn-add:hover {
+            background-color: #0b5ed7;
+        }
+
+        .btn-danger {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+        }
+
+        /* NEW */
+        .table-responsive {
+            overflow-x: auto;
+        }
+    </style>
+@endpush
 
 @section('content')
-    <div class="row">
-        <div class="col-lg-12 margin-tb">
-            <div class="pull-left">
-                <h2>Tambah Pengeluaran RT</h2>
-            </div>
-            <div class="pull-right">
-                <a class="btn btn-primary" href="{{ route('manage-rt.pengeluaran-rt.index') }}">Kembali</a>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card form-card border-0">
+                    <div class="card-header bg-primary text-white rounded-top">
+                        <h5 class="mb-0">
+                            <i class="bi bi-cash-coin me-2"></i>
+                            Tambah Pengeluaran RT
+                        </h5>
+                    </div>
+                    @if ($errors->has('error'))
+                        <div class="alert alert-danger">
+                            {{ $errors->first('error') }}
+                        </div>
+                    @endif
+                    <div class="card-body">
+                        <form action="{{ route('manage-rt.shared.pengeluaran.store') }}" method="POST"
+                            enctype="multipart/form-data">
+                            @csrf
+
+                            <!-- Pilih RT -->
+                            <!-- Pilih RT -->
+                            <input type="hidden" name="rt_id" value="{{ $rt->id }}">
+
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="bi bi-house me-1"></i> RT
+                                </label>
+                                <input type="text" class="form-control" value="{{ $rt->name }}" readonly>
+                            </div>
+
+                            <!-- Tanggal -->
+                            <div class="mb-3">
+                                <label for="tanggal" class="form-label">
+                                    <i class="bi bi-calendar-event me-1"></i> Tanggal
+                                </label>
+                                <input type="date" name="tanggal" id="tanggal" class="form-control"
+                                    value="{{ old('tanggal', date('Y-m-d')) }}" required>
+                                @error('tanggal')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Nama Pencatat -->
+                            <div class="mb-3">
+                                <label for="nama_pencatat" class="form-label">
+                                    <i class="bi bi-person me-1"></i> Nama Pencatat
+                                </label>
+                                <input type="text" name="nama_pencatat" id="nama_pencatat" class="form-control"
+                                    value="{{ old('nama_pencatat', auth()->user()->name) }}" readonly
+                                    style="background-color: #f8f9fa;">
+                                @error('nama_pencatat')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Catatan Umum -->
+                            <div class="mb-3">
+                                <label for="catatan" class="form-label">
+                                    <i class="bi bi-journal-text me-1"></i> Catatan Umum
+                                </label>
+                                <textarea name="catatan" id="catatan" class="form-control" rows="3"
+                                    placeholder="Catatan tambahan untuk pengeluaran ini...">{{ old('catatan') }}</textarea>
+                            </div>
+
+                            <!-- Bukti Gambar -->
+                            <div class="mb-3">
+                                <label for="bukti_gambar" class="form-label">
+                                    <i class="bi bi-image me-1"></i> Bukti Gambar
+                                </label>
+                                <input type="file" name="bukti_gambar" id="bukti_gambar" class="form-control"
+                                    accept="image/*">
+                                <small class="text-muted">Format: JPG, PNG, maksimal 2MB</small>
+                                @error('bukti_gambar')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <hr class="my-4">
+
+                            <!-- Daftar Item Pengeluaran -->
+                            <h5 class="mb-3 text-primary">
+                                <i class="bi bi-list-ul me-2"></i> Daftar Item Pengeluaran
+                            </h5>
+
+                            <div class="table-responsive">
+                                <table class="table table-hover table-bordered align-middle" id="itemsTable">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Nama Item</th>
+                                            <th>Jumlah</th>
+                                            <th>Satuan</th>
+                                            <th>Harga Satuan</th>
+                                            <th>Catatan</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <input type="text" name="items[0][nama_item]" class="form-control"
+                                                    placeholder="Contoh: Semen" required>
+                                            </td>
+                                            <td>
+                                                <input type="number" name="items[0][jumlah]" class="form-control"
+                                                    min="1" value="1" required>
+                                            </td>
+                                            <td>
+                                                <input type="text" name="items[0][satuan]" class="form-control"
+                                                    placeholder="Contoh: sak">
+                                            </td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <span class="input-group-text">Rp</span>
+                                                    <input type="number" step="0.01" name="items[0][harga_satuan]"
+                                                        class="form-control" placeholder="0.00" required>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <input type="text" name="items[0][catatan]" class="form-control"
+                                                    placeholder="Opsional">
+                                            </td>
+                                            <td class="text-center">
+                                                <button type="button" class="btn btn-outline-danger btn-sm remove-item">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <button type="button" class="btn btn-add btn-sm mb-3" id="addItem">
+                                <i class="bi bi-plus-circle me-1"></i> Tambah Item
+                            </button>
+                            <!-- Total Pengeluaran -->
+                            <div class="mb-4 text-end">
+                                <h5>Total Pengeluaran: <span id="totalPengeluaranDisplay" class="text-primary">Rp 0</span>
+                                </h5>
+                            </div>
+                            <!-- Tombol Aksi -->
+                            <div class="d-flex gap-2">
+                                <a href="{{ url()->previous() }}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left-circle"></i> Kembali
+                                </a>
+                                <button type="submit" class="btn btn-success px-4">
+                                    <i class="bi bi-save me-1"></i> Simpan Pengeluaran
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <form action="{{ route('manage-rt.pengeluaran-rt.store') }}" method="POST">
-        @csrf
-        <div class="form-group">
-            <label for="rt_id">RT:</label>
-            <select name="rt_id" class="form-control" required>
-                <option value="">- Pilih RT -</option>
-                @foreach ($rts as $rt)
-                    <option value="{{ $rt->id }}" {{ old('rt_id') == $rt->id ? 'selected' : '' }}>{{ $rt->name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="amount">Jumlah Pengeluaran:</label>
-            <input type="number" name="amount" class="form-control" required step="0.01" min="0">
-        </div>
-
-        <div class="form-group">
-            <label for="description">Keterangan:</label>
-            <textarea name="description" class="form-control" required></textarea>
-        </div>
-
-        <div class="form-group">
-            <label for="approved_by">Bendahara yang Menyetujui:</label>
-            <select name="approved_by" class="form-control" required>
-                <option value="">- Pilih Bendahara -</option>
-                @foreach ($bendaharas as $bendahara)
-                    <option value="{{ $bendahara->id }}" {{ old('approved_by') == $bendahara->id ? 'selected' : '' }}>
-                        {{ $bendahara->name }}</option>
-                @endforeach
-            </select>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Simpan Pengeluaran</button>
-    </form>
 @endsection
+
+@push('scripts')
+    <script>
+        let itemIndex = 1;
+
+        document.getElementById('addItem').addEventListener('click', function() {
+            const tableBody = document.querySelector('#itemsTable tbody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>
+                    <input type="text" name="items[${itemIndex}][nama_item]" class="form-control" placeholder="Nama item" required>
+                </td>
+                <td>
+                    <input type="number" name="items[${itemIndex}][jumlah]" class="form-control" min="1" value="1" required>
+                </td>
+                <td>
+                    <input type="text" name="items[${itemIndex}][satuan]" class="form-control" placeholder="Satuan">
+                </td>
+                <td>
+                    <div class="input-group">
+                        <span class="input-group-text">Rp</span>
+                        <input type="number" step="0.01" name="items[${itemIndex}][harga_satuan]" class="form-control" placeholder="0.00" required>
+                    </div>
+                </td>
+                <td>
+                    <input type="text" name="items[${itemIndex}][catatan]" class="form-control" placeholder="Catatan">
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-outline-danger btn-sm remove-item">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+            itemIndex++;
+        });
+
+        // Hapus baris
+        document.querySelector('#itemsTable').addEventListener('click', function(e) {
+            if (e.target.closest('.remove-item')) {
+                const row = e.target.closest('tr');
+                if (document.querySelectorAll('#itemsTable tbody tr').length > 1) {
+                    row.remove();
+                } else {
+                    alert('Minimal satu item harus ada.');
+                }
+            }
+        });
+
+        function hitungTotalPengeluaran() {
+            let total = 0;
+
+            // Ambil semua baris
+            document.querySelectorAll('#itemsTable tbody tr').forEach(row => {
+                const jumlahInput = row.querySelector('input[name*="[jumlah]"]');
+                const hargaInput = row.querySelector('input[name*="[harga_satuan]"]');
+
+                const jumlah = parseFloat(jumlahInput?.value || 0);
+                const harga = parseFloat(hargaInput?.value || 0);
+
+                total += jumlah * harga;
+            });
+
+            // Format ke rupiah dan tampilkan
+            document.getElementById('totalPengeluaranDisplay').textContent = formatRupiah(total);
+        }
+
+        function formatRupiah(angka) {
+            return 'Rp ' + angka.toLocaleString('id-ID', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+        }
+
+        // Hitung ulang setiap input jumlah/harga berubah
+        document.addEventListener('input', function(e) {
+            if (e.target.name?.includes('[jumlah]') || e.target.name?.includes('[harga_satuan]')) {
+                hitungTotalPengeluaran();
+            }
+        });
+
+        // Hitung ulang saat item ditambah
+        document.getElementById('addItem').addEventListener('click', function() {
+            setTimeout(() => hitungTotalPengeluaran(), 50); // Delay agar input ter-render dulu
+        });
+
+        // Hitung ulang saat item dihapus
+        document.querySelector('#itemsTable').addEventListener('click', function(e) {
+            if (e.target.closest('.remove-item')) {
+                setTimeout(() => hitungTotalPengeluaran(), 50);
+            }
+        });
+
+        // Hitung total awal saat halaman dimuat
+        window.addEventListener('DOMContentLoaded', () => {
+            hitungTotalPengeluaran();
+        });
+    </script>
+@endpush

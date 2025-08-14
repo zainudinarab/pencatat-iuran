@@ -13,23 +13,16 @@ return new class extends Migration
     {
         Schema::create('saldo_rt_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('rt_id')->constrained()->onDelete('cascade'); // RT terkait
-            $table->decimal('amount', 15, 2); // Nominal perubahan saldo
-            $table->enum('type', ['pemasukan', 'pengeluaran']); // income = pemasukan, expense = pengeluaran
-            $table->string('description'); // Keterangan transaksi
-            $table->foreignId('reference_id')->nullable(); // ID referensi (misal pembayaran atau pengeluaran)
-            $table->string('reference_type')->nullable(); // Jenis referensi (pembayaran, setoran, pengeluaran)
+            $table->foreignId('rt_id')->constrained()->onDelete('cascade');
+            $table->decimal('amount', 15, 2); // Nilai perubahan (positif atau negatif)
+            $table->decimal('saldo_sebelum', 15, 2);
+            $table->decimal('saldo_sesudah', 15, 2);
+            $table->enum('type', ['pemasukan', 'pengeluaran']);
+            $table->string('description');
+            $table->foreignId('reference_id')->nullable(); // ID referensi sumber
+            $table->string('reference_type')->nullable(); // Tabel referensi sumber
             $table->timestamps();
         });
-        // Schema::create('saldo_rt_logs', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->foreignId('saldo_rt_id')->constrained();
-        //     $table->foreignId('transaksi_id')->nullable()->constrained('transaksi_rts');
-        //     $table->decimal('perubahan', 15, 2);
-        //     $table->decimal('saldo_setelah', 15, 2);
-        //     $table->string('keterangan')->nullable();
-        //     $table->timestamps();
-        // });
     }
 
     /**

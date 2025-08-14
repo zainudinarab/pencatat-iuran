@@ -11,6 +11,8 @@
     <!-- Font Awesome 6.5.0 -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         :root {
             --primary: #4e73df;
@@ -247,6 +249,14 @@
                     </div>
                     <div class="offcanvas-body p-0">
                         <ul class="nav flex-column px-2 mt-2">
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->is('manage-rt/dashboard') ? 'active' : '' }}"
+                                    href="{{ url('/manage-rt/dashboard') }}">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            </li>
+
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->is('manage-rt/rts') ? 'active' : '' }}"
                                     href="/manage-rt/rts">

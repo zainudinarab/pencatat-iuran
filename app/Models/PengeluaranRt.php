@@ -12,13 +12,27 @@ class PengeluaranRt extends Model
     protected $fillable = [
         'rt_id',
         'user_id',
-        'nomor_nota',
         'nama_pencatat',
+        'nomor_nota',
         'total',
         'tanggal',
         'catatan',
         'bukti_gambar',
+        'status_konfirmasi'
     ];
+
+    // Di model PengeluaranRt.php
+    protected $dates = ['tanggal'];
+    // atau di Laravel terbaru
+    protected $casts = [
+        'tanggal' => 'datetime',
+    ];
+
+    public function confirmedByUser()
+    {
+        return $this->belongsTo(User::class, 'confirmed_by');
+    }
+
 
     public function user()
     {
@@ -26,10 +40,10 @@ class PengeluaranRt extends Model
             'name' => 'User tidak tersedia'
         ]);
     }
-public function rt()
-{
-    return $this->belongsTo(Rt::class, 'rt_id');
-}
+    public function rt()
+    {
+        return $this->belongsTo(Rt::class, 'rt_id');
+    }
 
     /**
      * Relasi ke item-item pengeluaran
@@ -40,29 +54,33 @@ public function rt()
     }
 
     /**
- * Generate nomor nota unik per RT per hari
- */
-protected static function boot()
-{
-    parent::boot();
+     * Generate nomor nota unik per RT per hari
+     */
+    protected static function boot()
+    {
+        parent::boot();
 
-    static::creating(function ($model) {
-        if (empty($model->nomor_nota)) {
-            $model->nomor_nota = static::generateNomorNota($model->rt_id);
-        }
-    });
-}
+        static::creating(function ($model) {
+            if (empty($model->nomor_nota)) {
+                $model->nomor_nota = static::generateNomorNota($model->rt_id);
+            }
+        });
+    }
+    public function validator()
+    {
+        return $this->belongsTo(User::class, 'confirmed_by')->withDefault([
+            'name' => 'Validator tidak tersedia'
+        ]);
+    }
 
-public static function generateNomorNota($rtId): string
-{
-    $rtCode = 'RT-' . str_pad($rtId, 2, '0', STR_PAD_LEFT);
-    $date = now()->format('Ymd');
-    $lastNota = static::where('nomor_nota', 'like', "NOTA/{$rtCode}/{$date}%")->latest()->first();
+    public static function generateNomorNota($rtId): string
+    {
+        $rtCode = 'RT-' . str_pad($rtId, 2, '0', STR_PAD_LEFT);
+        $date = now()->format('Ymd');
+        $lastNota = static::where('nomor_nota', 'like', "NOTA/{$rtCode}/{$date}%")->latest()->first();
 
-    $sequence = $lastNota ? (int) substr($lastNota->nomor_nota, -3) + 1 : 1;
+        $sequence = $lastNota ? (int) substr($lastNota->nomor_nota, -3) + 1 : 1;
 
-    return "NOTA/{$rtCode}/{$date}/" . str_pad($sequence, 3, '0', STR_PAD_LEFT);
-}
-
-
+        return "NOTA/{$rtCode}/{$date}/" . str_pad($sequence, 3, '0', STR_PAD_LEFT);
+    }
 }

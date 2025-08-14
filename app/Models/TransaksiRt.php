@@ -10,14 +10,13 @@ class TransaksiRt extends Model
 {
     protected $fillable = [
         'rt_id',
-        'setoran_id',
         'jenis',
-        'jumlah',
+        'sumber',
+        'ref_id',
+        'ref_tabel',
+        'nominal',
+        'saldo_setelah',
         'keterangan',
-        'dokumen_bukti',
-        'pembuat_id',
-        'penyetuju_id',
-        'status'
     ];
 
     public function rt(): BelongsTo
@@ -33,5 +32,10 @@ class TransaksiRt extends Model
     public function pengeluaran(): HasOne
     {
         return $this->hasOne(PengeluaranRt::class, 'transaksi_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

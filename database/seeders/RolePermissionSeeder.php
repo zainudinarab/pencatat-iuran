@@ -32,6 +32,7 @@ class RolePermissionSeeder extends Seeder
             'profils',
             'roles',
             'permissions',
+
         ];
 
         // Permissions per tabel: view, create, edit, delete
@@ -44,7 +45,7 @@ class RolePermissionSeeder extends Seeder
             $permissions[] = "$table-delete";
         }
         // Tambahan khusus
-        
+
         $permissions[] = 'pembayaran-global';
         $permissions[] = 'setoran_petugas-reject';
         $permissions[] = 'setoran_petugas-confirm';
@@ -81,12 +82,16 @@ class RolePermissionSeeder extends Seeder
             'pembayarans-view',
             'pembayarans-create',
             'pembayarans-edit',
-             'pembayarans-delete',
+            'pembayarans-delete',
             'pembayaran-global',
             'activity_logs-view',
             'saldo_rts-view',
-            'pengeluaran_rts-view'
-            
+            'pengeluaran_rts-view',
+            'pengeluaran_rts-view',
+            'pengeluaran_rts-create',
+            'pengeluaran_rts-edit',
+            'pengeluaran_rts-delete'
+
         ]);
 
         Role::findByName('bendahara_rt')->syncPermissions([
@@ -95,7 +100,7 @@ class RolePermissionSeeder extends Seeder
             'pembayarans-view',
             'pembayarans-create',
             'pembayarans-edit',
-             'pembayarans-delete',
+            'pembayarans-delete',
             'pembayaran-global',
             'setoran_petugas-create',
             'setoran_petugas-view',
@@ -105,7 +110,11 @@ class RolePermissionSeeder extends Seeder
             'pengeluaran_rts-view',
             'pengeluaran_rts-create',
             'setoran_petugas-reject',
-            'setoran_petugas-confirm'
+            'setoran_petugas-confirm',
+            'pengeluaran_rts-view',
+            'pengeluaran_rts-create',
+            'pengeluaran_rts-edit',
+            'pengeluaran_rts-delete'
         ]);
 
         Role::findByName('petugas_rt')->syncPermissions([

@@ -14,6 +14,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 
 // RT Controllers
+use App\Http\Controllers\Rt\DashboardController;
 use App\Http\Controllers\Rt\RtController;
 use App\Http\Controllers\Rt\GangController;
 use App\Http\Controllers\Rt\HouseController;
@@ -59,7 +60,7 @@ Route::middleware(['auth'])->group(function () {
         ->prefix('manage-rt')
         ->name('manage-rt.')
         ->group(function () {
-
+            Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
             // CRUD Data Dasar
             Route::resource('rts', RtController::class);
             Route::resource('gangs', GangController::class);
@@ -103,10 +104,20 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/transfer-pos', [TransferPosRtController::class, 'store'])->name('transfer-pos.store');
             Route::post('/transfer-pos/{id}/konfirmasi', [TransferPosRtController::class, 'konfirmasi'])->name('transfer-pos.konfirmasi');
             Route::post('/transfer-pos/{id}/tolak', [TransferPosRtController::class, 'tolak'])->name('transfer-pos.tolak');
-            Route::get('/pengeluaran', [PengeluaranController::class, 'index'])->name('pengeluaran.index');
-            Route::post('/pengeluaran', [PengeluaranController::class, 'store'])->name('pengeluaran.store');
-            Route::post('/pengeluaran/{id}/approve', [PengeluaranController::class, 'approvePengeluaran'])->name('pengeluaran.approve');
-            Route::get('/pengeluaran/{id}/nota', [PengeluaranController::class, 'showNota'])->name('pengeluaran.nota');
+            // Pengeluaran RT
+            Route::get('/pengeluaran', [PengeluaranRtController::class, 'index'])->name('pengeluaran.index');
+            Route::get('/pengeluaran/create', [PengeluaranRtController::class, 'create'])->name('pengeluaran.create');
+            Route::post('/pengeluaran', [PengeluaranRtController::class, 'store'])->name('pengeluaran.store');
+            Route::get('/pengeluaran/{pengeluaranRt}/edit', [PengeluaranRtController::class, 'edit'])->name('pengeluaran.edit');
+            Route::put('/pengeluaran/{pengeluaranRt}', [PengeluaranRtController::class, 'update'])->name('pengeluaran.update');
+            Route::delete('/pengeluaran/{pengeluaranRt}', [PengeluaranRtController::class, 'destroy'])->name('pengeluaran.destroy');
+            Route::get('pengeluaran/{id}/nota', [PengeluaranRtController::class, 'nota'])->name('pengeluaran.nota');
+
+            // Konfirmasi pengeluaran
+            Route::post('/pengeluaran/{id}/approve', [PengeluaranRtController::class, 'approvePengeluaran'])->name('pengeluaran.approve');
+
+            // Lihat nota pengeluaran
+            // Route::get('/pengeluaran/{id}/nota', [PengeluaranRtController::class, 'showNota'])->name('pengeluaran.nota');
         });
 
     // ===================================

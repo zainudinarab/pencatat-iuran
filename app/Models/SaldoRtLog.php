@@ -16,10 +16,12 @@ class SaldoRtLog extends Model
     protected $fillable = [
         'rt_id',
         'amount',
+        'saldo_sebelum',
+        'saldo_sesudah',
         'type',
         'description',
         'reference_id',
-        'reference_type'
+        'reference_type',
     ];
 
     // Definisi relasi dengan model RT
