@@ -33,6 +33,11 @@ class Pembayaran extends Model
     {
         return $this->belongsTo(House::class, 'house_id', 'id');
     }
+    public function gang()
+    {
+        return $this->belongsTo(Gang::class);
+        // return $this->belongsTo(Gang::class, 'gang_id');
+    }
     // public function pembayarans()
     // {
     //     return $this->hasMany(Pembayaran::class, 'house_id', 'id');
@@ -46,7 +51,10 @@ class Pembayaran extends Model
     {
         return $this->belongsTo(User::class, 'collector_id');
     }
-
+    public function rt()
+    {
+        return $this->belongsTo(Rt::class);
+    }
     /**
      * Relasi antara Pembayaran dan Setoran
      * Pembayaran bisa memiliki satu Setoran
@@ -61,6 +69,10 @@ class Pembayaran extends Model
      * Pembayaran bisa memiliki banyak DetailPembayaran
      */
     public function detailPembayaran()
+    {
+        return $this->hasMany(DetailPembayaran::class);
+    }
+    public function detailPembayarans()
     {
         return $this->hasMany(DetailPembayaran::class);
     }

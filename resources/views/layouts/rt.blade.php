@@ -334,6 +334,14 @@
                                     <span>Data Pengeluaran RT</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->is('manage-rt/laporan-petugas') ? 'active' : '' }}"
+                                    href="/manage-rt/laporan-petugas">
+                                    <i class="fas fa-file-signature"></i>
+                                    <span>Laporan Petugas</span>
+                                </a>
+                            </li>
+
                         </ul>
 
                     </div>

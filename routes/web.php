@@ -7,13 +7,15 @@ use App\Http\Controllers\ResidentController;
 use App\Http\Controllers\KonfirmasiSetoranController;
 use App\Http\Controllers\PengeluaranController;
 use App\Http\Controllers\SaldoController;
-use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\LaporanController;
 
 // RT Controllers
+// RT LaporanController
+use App\Http\Controllers\Rt\LaporanController as RtLaporanController;
 use App\Http\Controllers\Rt\DashboardController;
 use App\Http\Controllers\Rt\RtController;
 use App\Http\Controllers\Rt\GangController;
@@ -99,6 +101,15 @@ Route::middleware(['auth'])->group(function () {
         ->name('manage-rt.shared.')
         ->group(function () {
             Route::get('laporan-keuangan', [LaporanController::class, 'laporanKeuangan'])->name('laporan.keuangan');
+            // ✅ Laporan Petugas
+            Route::get('laporan-petugas', [RtLaporanController::class, 'laporanPetugas'])->name('laporan.petugas');
+            Route::get('laporan-petugas/{id}/detail', [RtLaporanController::class, 'detailPetugas'])->name('petugas.detail');
+            Route::get('laporan-petugas/detail-pembayaran/{id}', [RtLaporanController::class, 'showDetail'])->name('detail-pembayaran.show');
+            Route::get('laporan-tahunan-gang', [RtLaporanController::class, 'laporanTahunanPerGang'])->name('laporan.tahunan-gang');
+            Route::get('laporan-tahunan-gang/{tahun}/{gang_id}', [RtLaporanController::class, 'detailTahunanPerGang'])
+                ->name('laporan.tahunan-gang.detail');
+
+
             Route::get('pengaturan-iuran', [IuranWajibController::class, 'atur'])->name('iuran.atur');
             Route::get('/transfer-pos', [TransferPosRtController::class, 'index'])->name('transfer-pos.index');
             Route::post('/transfer-pos', [TransferPosRtController::class, 'store'])->name('transfer-pos.store');

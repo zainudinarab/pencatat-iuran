@@ -36,4 +36,24 @@ class Rt extends Model
     {
         return $this->hasMany(Gang::class);
     }
+    public function semuaPetugas()
+    {
+        $petugas = collect([]);
+
+        if ($this->ketuaRt) {
+            $petugas->push($this->ketuaRt);
+        }
+
+        if ($this->bendahara) {
+            $petugas->push($this->bendahara);
+        }
+
+        foreach ($this->gangs as $gang) {
+            if ($gang->ketuaGang) {
+                $petugas->push($gang->ketuaGang);
+            }
+        }
+
+        return $petugas->unique('id'); // supaya tidak dobel
+    }
 }
