@@ -75,6 +75,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('pembayaran-global', [PembayaranController::class, 'pembayaranGlobal'])->name('pembayaran.global');
             Route::get('belum-dibayar/{house_id}', [PembayaranController::class, 'getIuranBelumDibayar'])
                 ->name('pembayaran.belum-dibayar');
+            Route::get('iuran-all/{house_id}', [PembayaranController::class, 'getAllIuran'])
+                ->name('pembayaran.iuran-all');
 
 
             // Setoran Petugas

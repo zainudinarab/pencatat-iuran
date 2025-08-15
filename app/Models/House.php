@@ -42,4 +42,8 @@ class House extends Model
     // {
     //     static::addGlobalScope(new FilterByRtGangScope);
     // }
+    public function pemilik()
+    {
+        return $this->belongsTo(User::class, 'user_id'); // Ganti 'user_id' sesuai kolom di tabel houses
+    }
 }

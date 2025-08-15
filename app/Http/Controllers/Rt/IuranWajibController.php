@@ -101,7 +101,22 @@ class IuranWajibController extends Controller
     {
         $iuranWajib = IuranWajib::findOrFail($id);
         $rts = Rt::all();
-        return view('rt.manage_iuran_wajib.form', compact('iuranWajib', 'rts'));
+        $jenisIuran = JenisIuran::all();
+
+        // Generate ulang $months (sama seperti di create)
+        $months = [];
+        $start = Carbon::now()->startOfMonth();
+        $end = $start->copy()->addYears(2);
+
+        while ($start <= $end) {
+            $months[] = [
+                'value' => $start->format('Ym'), // Pastikan format sama: Ym (contoh: 202502)
+                'label' => $start->translatedFormat('F Y'), // Format lokal: Februari 2025
+            ];
+            $start->addMonth();
+        }
+
+        return view('rt.manage_iuran_wajib.form', compact('iuranWajib', 'rts', 'jenisIuran', 'months'));
     }
 
     public function update(Request $request, $id)

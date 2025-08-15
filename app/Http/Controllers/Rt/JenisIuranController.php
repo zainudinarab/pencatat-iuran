@@ -10,7 +10,11 @@ class JenisIuranController extends Controller
 {
     public function index()
     {
-        $jenisIurans = JenisIuran::all();
+        // Ambil semua jenis iuran dengan pagination (opsional: gunakan paginate() jika data banyak)
+        $jenisIurans = JenisIuran::query()
+            ->orderBy('name', 'asc') // Urutkan berdasarkan nama
+            ->paginate(10); // Tampilkan 10 data per halaman
+
         return view('rt.jenis_iuran.index', compact('jenisIurans'));
     }
 

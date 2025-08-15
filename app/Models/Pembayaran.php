@@ -76,4 +76,8 @@ class Pembayaran extends Model
     {
         return $this->hasMany(DetailPembayaran::class);
     }
+    public function details()
+    {
+        return $this->hasMany(DetailPembayaran::class, 'pembayaran_id');
+    }
 }

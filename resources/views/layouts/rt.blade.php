@@ -341,6 +341,14 @@
                                     <span>Laporan Petugas</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->is('manage-rt/laporan-tahunan-gang') ? 'active' : '' }}"
+                                    href="/manage-rt/laporan-tahunan-gang">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>Laporan Tahunan per Gang</span>
+                                </a>
+                            </li>
+
 
                         </ul>
 

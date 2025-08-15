@@ -15,22 +15,22 @@ use Illuminate\Support\Facades\Auth;
 class PembayaranController extends Controller
 {
     public function index()
-{
-    $user = Auth::user();
-    $this->authorize('viewAny', Pembayaran::class);
+    {
+        $user = Auth::user();
+        $this->authorize('viewAny', Pembayaran::class);
 
-    $query = Pembayaran::with(['house', 'collector', 'setoran', 'detailPembayaran.iuranWajib']);
+        $query = Pembayaran::with(['house', 'collector', 'setoran', 'detailPembayaran.iuranWajib']);
 
-    // Jika user memiliki role ketua_rt atau bendahara_rt, filter berdasarkan id mereka
-    if ($user->hasAnyRole(['ketua_rt', 'bendahara_rt'])) {
-        $query->where('collector_id', $user->id);
+        // Jika user memiliki role ketua_rt atau bendahara_rt, filter berdasarkan id mereka
+        if ($user->hasAnyRole(['ketua_rt', 'bendahara_rt'])) {
+            $query->where('collector_id', $user->id);
+        }
+
+        $pembayaran = $query->paginate(10);
+
+        return view('rt.manage_pembayaran.index', compact('pembayaran'));
     }
-
-    $pembayaran = $query->paginate(10);
-    
-    return view('rt.manage_pembayaran.index', compact('pembayaran'));
-}
-     public function pembayaranGlobal()
+    public function pembayaranGlobal()
     {
         $this->authorize('viewAny', Pembayaran::class);
 
@@ -100,30 +100,67 @@ class PembayaranController extends Controller
 
     public function edit($id)
     {
-        $pembayaran = Pembayaran::findOrFail($id);
-        $houses = House::all();
-        $iuranWajib = IuranWajib::all();
-        return view('rt.manage_pembayaran.form', compact('pembayaran', 'houses', 'iuranWajib'));
+        $pembayaran = Pembayaran::with(['details'])->findOrFail($id);
+        // Ambil iuran_wajib_id yang sudah dibayar pada pembayaran ini
+        $selectedIuran = $pembayaran->details->pluck('iuran_wajib_id')->toArray();
+
+        return view('rt.manage_pembayaran.edit', compact('pembayaran', 'selectedIuran'));
     }
+
 
     public function update(Request $request, $id)
     {
-        $pembayaran = Pembayaran::findOrFail($id);
-
-        $request->validate([
+        $validated = $request->validate([
             'house_id' => 'required|exists:houses,id',
+            'collector_id' => 'required|exists:users,id',
+            'iuran_wajib' => 'required|json',
             'total_amount' => 'required|numeric',
-            'payment_method' => 'required|in:manual,midtrans,xendit',
-            'status' => 'required|in:confirmed,failed',
-            'collector_id' => 'nullable|exists:users,id',
-            'setoran_id' => 'nullable|exists:setoran_petugas,id',
-            'payment_source' => 'required|in:resident,collector',
         ]);
 
-        $pembayaran->update($request->all());
+        $pembayaran = Pembayaran::findOrFail($id);
 
-        return redirect()->route('manage-rt.pembayaran.index')->with('success', 'Pembayaran berhasil diperbarui');
+        // Update pembayaran utama
+        $pembayaran->update([
+            'house_id' => $request->house_id,
+            'total_amount' => $request->total_amount,
+            'payment_method' => $request->payment_method,
+            'collector_id' => Auth::user()->id,
+        ]);
+
+        // Ambil data lama
+        $oldDetails = DetailPembayaran::where('pembayaran_id', $pembayaran->id)
+            ->pluck('iuran_wajib_id')
+            ->toArray();
+
+        // Data baru dari request
+        $newDetails = json_decode($request->iuran_wajib, true);
+        $newIds = array_keys($newDetails);
+
+        // Cari yang dihapus (uncentang)
+        $deletedIds = array_diff($oldDetails, $newIds);
+        if (!empty($deletedIds)) {
+            DetailPembayaran::where('pembayaran_id', $pembayaran->id)
+                ->whereIn('iuran_wajib_id', $deletedIds)
+                ->delete();
+        }
+
+        // Cari yang baru ditambahkan (centang baru)
+        $addedIds = array_diff($newIds, $oldDetails);
+        foreach ($addedIds as $iuranId) {
+            DetailPembayaran::create([
+                'pembayaran_id' => $pembayaran->id,
+                'house_id' => $request->house_id,
+                'iuran_wajib_id' => $iuranId,
+                'amount' => $newDetails[$iuranId],
+                'status' => 'confirmed',
+            ]);
+        }
+
+        return redirect()->route('manage-rt.pembayaran.index')
+            ->with('success', 'Pembayaran berhasil diperbarui');
     }
+
+
 
     public function destroy($id)
     {
@@ -167,6 +204,49 @@ class PembayaranController extends Controller
             'status' => 'success',
             'message' => 'Semua iuran yang belum dibayar berhasil diambil.',
             'data' => $iuranBelumDibayar
+        ]);
+    }
+
+    // Controller
+    public function getAllIuran($pembayaran_id)
+    {
+        // Ambil pembayaran beserta rumahnya
+        $pembayaran = Pembayaran::with('house')->findOrFail($pembayaran_id);
+
+        // Ambil semua iuran
+        $allIuran = IuranWajib::with('jenisIuran')
+            ->orderBy('bill_month', 'asc') // ascending → dari Januari 2025 ke seterusnya
+            ->get();
+
+
+        // Iuran yang sudah dibayar di pembayaran ini (supaya muncul & tercentang)
+        $currentPaidIds = DetailPembayaran::where('pembayaran_id', $pembayaran_id)
+            ->pluck('iuran_wajib_id')
+            ->toArray();
+
+        // Iuran yang sudah dibayar rumah ini di pembayaran lain
+        $paidOtherIds = DetailPembayaran::where('house_id', $pembayaran->house_id)
+            ->where('pembayaran_id', '!=', $pembayaran_id)
+            ->pluck('iuran_wajib_id')
+            ->toArray();
+
+        // Filter: hanya tampilkan iuran yang belum dibayar di pembayaran lain,
+        // atau iuran yang ada di pembayaran ini
+        $data = $allIuran->filter(function ($iuran) use ($paidOtherIds, $currentPaidIds) {
+            return !in_array($iuran->id, $paidOtherIds) || in_array($iuran->id, $currentPaidIds);
+        })->map(function ($iuran) use ($currentPaidIds) {
+            return [
+                'id' => $iuran->id,
+                'jenis_iuran_nama' => $iuran->jenisIuran->name,
+                'bill_month' => $iuran->bill_month,
+                'amount' => $iuran->amount,
+                'is_paid' => in_array($iuran->id, $currentPaidIds),
+            ];
+        })->values();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $data
         ]);
     }
 }
